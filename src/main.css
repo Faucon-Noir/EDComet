@@ -1,0 +1,57 @@
+/* Light Fonts */
+@font-face {
+  font-family: "SansationLight";
+  src: url('./fonts/Sansation_Light.ttf') format('truetype');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: "SansationLightItalic";
+  src: url('./fonts/Sansation_Light_Italic.ttf') format('truetype');
+  font-weight: bold;
+}
+
+/* Regular Fonts */
+@font-face {
+  font-family: "SansationRegular";
+  src: url('./fonts/Sansation_Regular.ttf') format('truetype');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: "SansationRegularItalic";
+  src: url('./fonts/Sansation_Italic.ttf') format('truetype');
+  font-weight: bold;
+}
+
+/* ---------- Global css ---------- */
+/* :root {
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background: radial-gradient(#021027, #000000);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 400px;
+  min-height: 100vh;
+  font-family: 'SansationLight', sans-serif !important;
+} */
+
+/* a {
+  color: #FFFFFFDE !important;
+  text-decoration: none !important;
+}
+
+h1 {
+  font-size: 2.5rem;
+  line-height: 1.1;
+} */

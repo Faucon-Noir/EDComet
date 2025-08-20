@@ -1,0 +1,16 @@
+{
+	"admin": {
+		"dashboard": {
+			"title": "Dashboard",
+			"markets": "Markets",
+			"ship": "Ship",
+			"systems": "Systems"
+		},
+		"warning": "Please note that you are in a secure zone. Any unauthorized action will be recorded."
+	},
+	"home": {
+		"title": "ED Comet",
+		"subtitle": "Welcome",
+		"description": "Welcome to ED Comet, the Construction Market & Exploration Tool"
+	}
+}

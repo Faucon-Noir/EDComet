@@ -1,0 +1,13 @@
+{
+	"title": "ED Comet",
+	"header": {
+		"home": "Home",
+		"admin": "Admin",
+		"test": "Test"
+	},
+	"components": {
+		"error": {
+			"text": "An error occured: {{errorMsg}}"
+		}
+	}
+}
