@@ -1,13 +1,15 @@
 import { Box, List } from "@mui/material";
 import { MainBoxStyle, WrapperBoxStyle } from "./style";
+import { useTranslation } from "react-i18next";
 
-const AdminDisplayBox = ({ text, items }: any) => {
+const DisplayBox = ({ text, items }: any) => {
+	const { t } = useTranslation("common", { keyPrefix: "components" });
 	return (
 		<Box sx={WrapperBoxStyle}>
 			<Box sx={MainBoxStyle}>
 				{text}
 				{items ? (
-					<div>Nothing to Display</div>
+					<div>{t("wip")}</div>
 				) : (
 					<div>Something to Display</div>
 				)}
@@ -17,4 +19,4 @@ const AdminDisplayBox = ({ text, items }: any) => {
 	);
 };
 
-export default AdminDisplayBox;
+export default DisplayBox;

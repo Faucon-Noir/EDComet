@@ -10,7 +10,20 @@
 	},
 	"home": {
 		"title": "ED Comet",
-		"subtitle": "Welcome",
-		"description": "Welcome to ED Comet, the Construction Market & Exploration Tool"
+		"description": "Welcome to ED Comet, the Construction Market & Exploration Tool",
+		"construction": "Constructions Site",
+		"ship": "Ship",
+		"systems": "Systems"
+	},
+	"ship": {
+		"title": "Your ship",
+		"description": "Here you will find information about your ships, and can select which one you want to use for transportation"
+	},
+	"construction": {
+		"title": "Your construction projects",
+		"description": "Here you will find information about your construction projects, such as their status, progress, ressources required, and more."
+	},
+	"test":{
+		"title": "Test Page"
 	}
 }

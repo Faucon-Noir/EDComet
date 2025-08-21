@@ -16,31 +16,30 @@ const TestPage: React.FC = () => {
     return (
         <>
             <div>
-                <h1>Test Page</h1>
+                <h1>{t('title')}</h1>
                 <div>{t('title')} should be equal to upper h1</div>
             </div>
             <>
                 <h1>ABCDEFGHIJKLMNOPQRSTUVWXYZ</h1>
-                <br />
                 <h2>abcdefghijklmnopqrstuvwxyz</h2>
-                <br />
                 <h2>1234567890</h2>
-                <br />
                 <h2>{'&é~"#\'{([-|è`_ \\ ç^à@)]=}$¤£µ*?,.;/:§!€'}</h2>
+                <Box display="flex" justifyContent={'center'} gap="2">
+                    {colors.map((color, index) => (
+                        <Box
+                            key={index}
+                            sx={{
+                                width: 50,
+                                height: 50,
+                                borderRadius: '50%',
+                                backgroundColor: color,
+                                border: '2px solid white',
+                                margin: '0 4px',
+                            }}
+                        />
+                    ))}
+                </Box>
             </>
-            <Box display="flex" gap="2">
-                {colors.map((color, index) => (
-                    <Box
-                        key={index}
-                        sx={{
-                            width: 50,
-                            height: 50,
-                            borderRadius: '50%',
-                            backgroundColor: color,
-                        }}
-                    />
-                ))}
-            </Box>
         </>
     );
 };

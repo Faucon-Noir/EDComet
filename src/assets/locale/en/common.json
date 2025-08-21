@@ -1,13 +1,15 @@
 {
 	"title": "ED Comet",
 	"header": {
+		"construction": "Construction",
 		"home": "Home",
-		"admin": "Admin",
+		"ship": "Ship",
 		"test": "Test"
 	},
 	"components": {
 		"error": {
 			"text": "An error occured: {{errorMsg}}"
-		}
+		},
+		"wip": "Work in progress"
 	}
 }
