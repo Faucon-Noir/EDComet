@@ -5,7 +5,7 @@
 		"dev": "nodemon",
 		"open-index": "open-cli ./coverage/lcov-report/index.html",
 		"test": "jest ./src/tests/Index.test.ts --runInBand --detectOpenHandles --coverage || npm run open-index",
-		"tsoa:gen": "yarn tsoa spec && echo \"tsoa spec generated\" && yarn tsoa routes && echo \"tsoa routes generated\""
+		"tsoa:gen": "yarn tsoa spec && echo \"tsoa spec generated\" && yarn tsoa routes && echo \"tsoa routes generated\" && cd ../frontend && yarn client:gen"
 	},
 	"dependencies": {
 		"class-transformer": "^0.5.1",

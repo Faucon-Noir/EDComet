@@ -4,7 +4,10 @@
 	"controllerPathGlobs": ["src/controllers/*Controller.ts"],
 	"spec": {
 		"outputDirectory": "src",
-		"specVersion": 3
+		"specVersion": 3.0,
+		"title": "edcomet-API",
+		"version": "0.1.0",
+		"description": "ED COMET API specification"
 	},
 	"routes": {
 		"routesDir": "src/"
