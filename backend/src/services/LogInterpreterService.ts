@@ -6,18 +6,19 @@ import {
 } from "../../../shared/types/log.type";
 import { EventEnum } from "../../../shared/types/enum";
 import dotenv from "dotenv";
+import { getLogsPath } from "../utils/utils";
 dotenv.config();
 const logFile = getLatestLogFile();
 
 export function getLatestLogFile(): string | null {
-	const logsDir = process.env.LOGS_DIR;
-	if (!logsDir) {
+	const logPaths = getLogsPath();
+	if (!logPaths) {
 		throw new Error(
 			"LOGS_DIR non défini dans les variables d'environnement."
 		);
 	}
 	const files = fs
-		.readdirSync(logsDir)
+		.readdirSync(logPaths)
 		.filter((f) => /^Journal\..*\.log$/.test(f));
 	if (files.length === 0) return null;
 	files.sort((a, b) => {
@@ -25,8 +26,8 @@ export function getLatestLogFile(): string | null {
 		const dateB = b.split(".")[1];
 		return dateB.localeCompare(dateA); // décroissant
 	});
-	console.log("File:", path.join(logsDir, files[0]));
-	return path.join(logsDir, files[0]);
+	console.log("File:", files[0]);
+	return path.join(logPaths, files[0]);
 }
 
 /**
