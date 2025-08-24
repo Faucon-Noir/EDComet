@@ -29,8 +29,11 @@ export function getLatestLogFile(): string | null {
 	return path.join(logsDir, files[0]);
 }
 
-// Récupère le premier event "Loadout" du journal le plus récent
-export function getLatestShipLoadout(): ShipLoadout | null {
+/**
+ * A function to get the ShipLoadout
+ * @returns A ShipLoadout object or null
+ */
+export function getLoadout(): ShipLoadout | null {
 	if (!logFile) return null;
 	const content = fs.readFileSync(logFile, "utf8");
 	const lines = content.split("\n").filter((l) => l.trim().length > 0);
