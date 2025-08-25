@@ -223,3 +223,7 @@ $RECYCLE.BIN/
 #TSOA gen
 backend/**/routes.ts
 backend/**/swagger.json
+
+# OpenApi Generator files
+**/api/
+openapitools.json

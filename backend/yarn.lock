@@ -655,7 +655,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*":
+"@types/node@npm:*, @types/node@npm:^24.3.0":
   version: 24.3.0
   resolution: "@types/node@npm:24.3.0"
   dependencies:
@@ -1268,6 +1268,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "ed-comet-backend@workspace:."
   dependencies:
+    "@types/node": "npm:^24.3.0"
     class-transformer: "npm:^0.5.1"
     class-validator: "npm:^0.14.2"
     cors: "npm:^2.8.5"
