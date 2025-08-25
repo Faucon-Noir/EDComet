@@ -5,8 +5,6 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite",
-		"client:gen": "openapi-generator-cli generate -i ../backend/src/swagger.json -g typescript-axios -o ./src/api ",
-		"client:watch": "chokidar '../backend/src/generated/swagger.json' -c 'yarn gen:client'",
 		"build": "tsc -b && vite build",
 		"lint": "eslint .",
 		"preview": "vite preview"

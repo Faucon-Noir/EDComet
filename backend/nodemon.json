@@ -1,5 +1,5 @@
 {
-	"watch": ["src/controllers/", "src/services/", "src/index.ts"],
+	"watch": ["src/controllers/", "src/services/", "src/index.ts", "src/scripts/preTsoaGen.ts"],
 	"ext": "ts",
 	"ignore": ["*/routes.ts", "*/swagger.json"],
 	"exec": "yarn tsoa:gen && ts-node ./src/index.ts"
