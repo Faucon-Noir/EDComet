@@ -217,6 +217,9 @@ $RECYCLE.BIN/
 
 # Custom rules (everything added below won't be overriden by 'Generate .gitignore File' if you use 'Update' option)
 
+# Workspace file
+*.code-Workspace
+
 #Global Rider
 .idea
 
@@ -224,6 +227,7 @@ $RECYCLE.BIN/
 backend/**/routes.ts
 backend/**/swagger.json
 tsoa.json
+NUL
 
 # OpenApi Generator files
 **/api/

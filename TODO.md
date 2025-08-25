@@ -4,6 +4,11 @@
 
 ## To study
 
+"dev": "nodemon",
+  "open-index": "open-cli ./coverage/lcov-report/index.html",
+  "test": "jest ./src/tests/Index.test.ts --runInBand --detectOpenHandles --coverage || npm run open-index",
+  "tsoa:gen": "node ./src/scripts/preTsoaGen.ts; yarn tsoa spec; echo \"tsoa spec generated\"; yarn tsoa routes; echo \"tsoa routes generated\"; cd ../frontend; yarn client:gen",
+
 ### React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.

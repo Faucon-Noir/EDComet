@@ -1,12 +1,11 @@
 import * as fs from "fs";
 import * as path from "path";
-import {
-	ColonisationConstructionDepot,
-	ShipLoadout,
-} from "../../../shared/types/log.type";
 import { EventEnum } from "../../../shared/types/enum";
 import dotenv from "dotenv";
 import { getLogsPath } from "../utils/utils";
+import { ShipLoadout } from "../../../shared/types/ship.type";
+import { ColonisationConstructionDepot } from "../../../shared/types/colonisation.type";
+
 dotenv.config();
 const logFile = getLatestLogFile();
 
