@@ -220,6 +220,11 @@ $RECYCLE.BIN/
 #Global Rider
 .idea
 
-#TSOA gen
+#TSOA
 backend/**/routes.ts
 backend/**/swagger.json
+tsoa.json
+
+# OpenApi Generator files
+**/api/
+openapitools.json

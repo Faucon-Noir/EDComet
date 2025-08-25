@@ -1,4 +1,10 @@
-## React + TypeScript + Vite
+# TODO
+
+## To do
+
+## To study
+
+### React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
@@ -48,3 +54,7 @@ export default tseslint.config({
   },
 })
 ```
+
+### Chokidar
+
+"client:watch": "chokidar '../backend/src/generated/swagger.json' -c 'yarn gen:client'",

@@ -1,14 +1,12 @@
 import express from "express";
 import cors from "cors";
-import path from "path";
-import { useExpressServer } from "routing-controllers";
-import { getLatestLogFile } from "./services/LogInterpreterService";
 import dotenv from "dotenv";
 import swaggerUi from "swagger-ui-express";
 
 // Auto generated tsoa files
 import { RegisterRoutes } from "./routes";
 import swaggerDocument from "./swagger.json";
+import { getLatestLogFile } from "./services/LogInterpreterService";
 
 dotenv.config();
 const PORT: number = parseInt(process.env.PORT || "8000");
@@ -34,14 +32,6 @@ try {
 } catch (error) {
 	console.log("No logs available", error);
 }
-
-const controllerPath = path.resolve("src", "controller", "*.ts");
-
-useExpressServer(app, {
-	defaultErrorHandler: true,
-	routePrefix: "/api",
-	controllers: [controllerPath],
-});
 
 const server = app.listen(PORT, "0.0.0.0", () => {
 	return (
