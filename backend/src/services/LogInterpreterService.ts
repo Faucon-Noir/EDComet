@@ -1,12 +1,11 @@
 import * as fs from "fs";
 import * as path from "path";
-import {
-	ColonisationConstructionDepot,
-	ShipLoadout,
-} from "../../../shared/types/log.type";
-import { EventEnum } from "../../../shared/types/enum";
 import dotenv from "dotenv";
 import { getLogsPath } from "../utils/utils";
+import { EventEnum } from "../../../shared/types/enum";
+import { ShipLoadout } from "../../../shared/types/ship.type";
+import { ColonisationConstructionDepot } from "../../../shared/types/colonisation.type";
+
 dotenv.config();
 const logFile = getLatestLogFile();
 
@@ -26,7 +25,7 @@ export function getLatestLogFile(): string | null {
 		const dateB = b.split(".")[1];
 		return dateB.localeCompare(dateA); // décroissant
 	});
-	console.log("File:", files[0]);
+	console.log("📁 File:", files[0]);
 	return path.join(logPaths, files[0]);
 }
 
@@ -66,7 +65,7 @@ export function getLatestConstructionDepot():
 			const event = JSON.parse(line);
 			if (event.event === EventEnum.ColonisationConstructionDepot) {
 				console.log(
-					"Found ColonisationConstructionDepot event:",
+					"✅Found ColonisationConstructionDepot event:",
 					event
 				);
 				return event as ColonisationConstructionDepot;

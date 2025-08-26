@@ -22,22 +22,22 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 try {
 	const logsAvailable = getLatestLogFile();
-	if (logsAvailable != null) console.info("Logs found !");
+	if (logsAvailable != null) console.info("✅ Logs found !");
 } catch (error) {
-	console.log("No logs available", error);
+	console.log("❌ No logs available", error);
 }
 
 try {
-	if (swaggerDocument != null) console.info("swagger file found !");
+	if (swaggerDocument != null) console.info("✅ swagger file found !");
 } catch (error) {
-	console.log("No logs available", error);
+	console.log("❌ No logs available", error);
 }
 
 const server = app.listen(PORT, "0.0.0.0", () => {
 	return (
-		console.log(`Express is listening at ${process.env.CLIENT_URL}`),
+		console.log(`👀 Express is listening at ${process.env.CLIENT_URL}`),
 		console.log(
-			`Swagger is listening at ${process.env.CLIENT_URL}/api-docs`
+			`👀 Swagger is listening at ${process.env.CLIENT_URL}/api-docs`
 		)
 	);
 });
