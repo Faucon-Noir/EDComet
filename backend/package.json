@@ -1,13 +1,12 @@
 {
 	"name": "ed-comet-backend",
-	"type": "module",
 	"packageManager": "yarn@4.5.2",
 	"scripts": {
-		"pre:dev": "yarn tsoa:gen",
-		"dev": "tsx watch ./src/index.ts",
-		"start": "tsx ./src/index.ts",
-		"tsoa:gen": "tsx ./src/scripts/preTsoaGen.ts && tsoa spec-and-routes"
-	},
+    "dev": "tsx watch --clear-screen=false --ignore src/generated --exec \"yarn tsoa:gen\" ./src/index.ts",
+    "open-index": "open-cli ./coverage/lcov-report/index.html",
+    "test": "jest ./src/tests/Index.test.ts --runInBand --detectOpenHandles --coverage || npm run open-index",
+    "tsoa:gen": "tsx ./src/scripts/preTsoaGen.ts && yarn tsoa spec && echo \"tsoa spec generated\" && yarn tsoa routes && echo \"tsoa routes generated\" && cd ../frontend && yarn client:gen"
+  },
 	"dependencies": {
 		"class-transformer": "^0.5.1",
 		"class-validator": "^0.14.2",
