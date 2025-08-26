@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 const apiUrl: string = process.env.API_URL;
+const apiPrefix: string = process.env.API_PREFIX;
 
 const tsoaConfig = {
 	entryFile: "src/index.ts",
@@ -15,11 +16,13 @@ const tsoaConfig = {
 		title: "EDComet API",
 		version: "0.1.1",
 		description: "EDComet API specification",
+		basePath: apiPrefix,
 		host: apiUrl,
 		schemes: ["http"],
 	},
 	routes: {
 		routesDir: "src/",
+		basePath: apiPrefix,
 	},
 };
 
