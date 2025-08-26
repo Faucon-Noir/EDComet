@@ -2,12 +2,14 @@
 
 ## To do
 
+- Parse the language from ED Journal and give it to the tool through the Hello Api. Fallback on english
+- Find a way to give the error page a localized message switching with the real error
+- Find a way to put a prefix on the api url (for now it wouldn't even from the env)
+- Add a static log-level and overcharge `console.level` with it
+
 ## To study
 
-"dev": "nodemon",
-  "open-index": "open-cli ./coverage/lcov-report/index.html",
-  "test": "jest ./src/tests/Index.test.ts --runInBand --detectOpenHandles --coverage || npm run open-index",
-  "tsoa:gen": "node ./src/scripts/preTsoaGen.ts; yarn tsoa spec; echo \"tsoa spec generated\"; yarn tsoa routes; echo \"tsoa routes generated\"; cd ../frontend; yarn client:gen",
+replace nodemon by tsx watch & chokidar
 
 ### React + TypeScript + Vite
 

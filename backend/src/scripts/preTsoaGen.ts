@@ -4,7 +4,6 @@ import dotenv from "dotenv";
 
 dotenv.config();
 const apiUrl: string = process.env.API_URL;
-console.log("API URL from env:", apiUrl);
 
 const tsoaConfig = {
 	entryFile: "src/index.ts",
@@ -26,6 +25,6 @@ const tsoaConfig = {
 
 const tsoaJsonPath = path.resolve("./tsoa.json");
 fs.writeFileSync(tsoaJsonPath, JSON.stringify(tsoaConfig, null, 2));
-console.log(`✅ tsoa.json updated with host: ${process.env.API_URL}`);
+console.log(`✅ tsoa.json updated`);
 
 export default tsoaConfig;

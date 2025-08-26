@@ -7,5 +7,5 @@
 	],
 	"ext": "ts",
 	"ignore": ["*/routes.ts", "*/swagger.json"],
-	"exec": "yarn tsoa:gen && ts-node ./src/index.ts"
+	"exec": "yarn tsoa:gen && tsx ./src/index.ts"
 }

@@ -2,11 +2,11 @@
 	"name": "ed-comet-backend",
 	"packageManager": "yarn@4.5.2",
 	"scripts": {
-    "dev": "tsx watch --clear-screen=false --ignore src/generated --exec \"yarn tsoa:gen\" ./src/index.ts",
-    "open-index": "open-cli ./coverage/lcov-report/index.html",
-    "test": "jest ./src/tests/Index.test.ts --runInBand --detectOpenHandles --coverage || npm run open-index",
-    "tsoa:gen": "tsx ./src/scripts/preTsoaGen.ts && yarn tsoa spec && echo \"tsoa spec generated\" && yarn tsoa routes && echo \"tsoa routes generated\" && cd ../frontend && yarn client:gen"
-  },
+		"dev": "nodemon",
+		"open-index": "open-cli ./coverage/lcov-report/index.html",
+		"test": "jest ./src/tests/Index.test.ts --runInBand --detectOpenHandles --coverage || npm run open-index",
+		"tsoa:gen": "tsx ./src/scripts/preTsoaGen.ts && yarn tsoa spec && echo \"✅ tsoa spec generated\" && yarn tsoa routes && echo \"✅ tsoa routes generated\" && cd ../frontend && yarn client:gen"
+	},
 	"dependencies": {
 		"class-transformer": "^0.5.1",
 		"class-validator": "^0.14.2",
@@ -19,7 +19,6 @@
 		"@types/node": "^24.3.0",
 		"nodemon": "^3.1.10",
 		"swagger-ui-express": "^5.0.1",
-		"ts-node": "^10.9.2",
 		"tsoa": "^6.6.0",
 		"tsx": "^4.20.5",
 		"typescript": "^5.9.2"
