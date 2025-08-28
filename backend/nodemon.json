@@ -3,7 +3,9 @@
 		"src/controllers/",
 		"src/services/",
 		"src/index.ts",
-		"src/scripts/preTsoaGen.ts"
+		"src/swagger-dark.css",
+		"src/scripts/preTsoaGen.ts",
+		"../shared/"
 	],
 	"ext": "ts",
 	"ignore": ["*/routes.ts", "*/swagger.json"],

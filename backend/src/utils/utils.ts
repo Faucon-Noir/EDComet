@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import os from "os";
+import { getFileHeader } from "../services/LogInterpreterService";
 
 /**
  *
@@ -20,5 +21,18 @@ export function getLogsPath(): string | null {
 	} else {
 		console.warn("⚠️ Dossier Elite Dangerous introuvable:", edPath);
 		return null;
+	}
+}
+
+export function getLanguage(): string {
+	const language = getFileHeader().language;
+	console.log(language);
+	switch (language) {
+		case "English/UK":
+			return "en";
+		case "French/FR":
+			return "fr";
+		default:
+			return "en";
 	}
 }
