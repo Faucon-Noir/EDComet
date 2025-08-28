@@ -5,17 +5,16 @@ import { getLogsPath } from "../utils/utils";
 import { EventEnum } from "../../../shared/types/enum";
 import { ShipLoadout } from "../../../shared/types/ship.type";
 import { ColonisationConstructionDepot } from "../../../shared/types/colonisation.type";
+import { FileHeader } from "../../../shared/types/fileHeader.type";
 
 dotenv.config();
 const logFile = getLatestLogFile();
+const content = fs.readFileSync(logFile, "utf8");
+const lines = content.split("\n").filter((line) => line.trim().length > 0);
 
 export function getLatestLogFile(): string | null {
 	const logPaths = getLogsPath();
-	if (!logPaths) {
-		throw new Error(
-			"LOGS_DIR non défini dans les variables d'environnement."
-		);
-	}
+
 	const files = fs
 		.readdirSync(logPaths)
 		.filter((f) => /^Journal\..*\.log$/.test(f));
@@ -35,15 +34,14 @@ export function getLatestLogFile(): string | null {
  */
 export function getLoadout(): ShipLoadout | null {
 	if (!logFile) return null;
-	const content = fs.readFileSync(logFile, "utf8");
-	const lines = content.split("\n").filter((l) => l.trim().length > 0);
 	for (const line of lines) {
 		try {
 			const event = JSON.parse(line);
 			if (event.event === EventEnum.Loadout) {
 				return event as ShipLoadout;
 			}
-		} catch {
+		} catch (err) {
+			console.warn("⚠️ Loadout Interpreter", err);
 			continue;
 		}
 	}
@@ -54,12 +52,8 @@ export function getLoadout(): ShipLoadout | null {
  * A function to get the latest ConstructionDepot where the commander docked
  * @returns An object, either of type ColonisationConstructionDepot or empty
  */
-export function getLatestConstructionDepot():
-	| ColonisationConstructionDepot
-	| {} {
-	if (!logFile) return {};
-	const content = fs.readFileSync(logFile, "utf8");
-	const lines = content.split("\n").filter((l) => l.trim().length > 0);
+export function getLatestConstructionDepot(): ColonisationConstructionDepot | null {
+	if (!logFile) return null;
 	for (const line of lines) {
 		try {
 			const event = JSON.parse(line);
@@ -70,9 +64,29 @@ export function getLatestConstructionDepot():
 				);
 				return event as ColonisationConstructionDepot;
 			}
-		} catch {
+		} catch (err) {
+			console.warn("⚠️ Latest Construction Interpreter:", err);
 			continue;
 		}
 	}
-	return {};
+	return null;
+}
+
+export function getFileHeader(): FileHeader | null {
+	if (!logFile) return null;
+	// if (!fileHeader) {
+	// 	console.warn("⚠️ No FileHeader found in logs, defaulting to 'en'");
+	// }
+	for (const line of lines) {
+		try {
+			const event = JSON.parse(line);
+			if (event.event === EventEnum.FileHeader) {
+				return event as FileHeader;
+			}
+		} catch (err) {
+			console.warn("⚠️ File Header Interpreter:", err);
+			continue;
+		}
+	}
+	return null;
 }

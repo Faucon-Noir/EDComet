@@ -1,9 +1,6 @@
 import { createTheme } from "@mui/material/styles";
 const theme = createTheme({
 	palette: {
-		background: {
-			default: "radial-gradient(#021027, #000000)",
-		},
 		text: {
 			primary: "#FFFFFFDE",
 			secondary: "#FFFFFFDE",
@@ -47,6 +44,7 @@ const theme = createTheme({
 					minWidth: "400px",
 					minHeight: "100vh",
 					fontFamily: "'SansationLight', sans-serif !important",
+					background: "radial-gradient(#021027, #000)",
 				},
 				input: {
 					border: "1px solid #fff",

@@ -1,0 +1,23 @@
+body {
+    background: radial-gradient(#021027, #000) !important;
+
+    span:not(pre span),
+    p,
+    td,
+    h2,
+    h4,
+    h5,
+    button {
+        color: #ddd !important;
+    }
+
+    .opblock-section-header,
+
+    .opblock-section-header {
+        background: #021027 !important;
+    }
+
+    .scheme-container {
+        background: transparent !important;
+    }
+}

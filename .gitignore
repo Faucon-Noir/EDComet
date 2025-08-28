@@ -232,3 +232,6 @@ NUL
 # OpenApi Generator files
 **/api/
 openapitools.json
+
+# Yarn
+**/.yarn/*

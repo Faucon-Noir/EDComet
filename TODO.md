@@ -4,12 +4,14 @@
 
 - Parse the language from ED Journal and give it to the tool through the Hello Api. Fallback on english
 - Find a way to give the error page a localized message switching with the real error
-- Find a way to put a prefix on the api url (for now it wouldn't even from the env)
 - Add a static log-level and overcharge `console.level` with it
+- Add a local db for persistance in BSON
+- Add social with FriendStatus -> For accuracy, we need to find a way to check that ED is open
 
 ## To study
 
 replace nodemon by tsx watch & chokidar
+Add a music tracker (not sure if pertinent)
 
 ### React + TypeScript + Vite
 
