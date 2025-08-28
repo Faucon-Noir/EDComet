@@ -2,16 +2,18 @@
 
 ## To do
 
-- Parse the language from ED Journal and give it to the tool through the Hello Api. Fallback on english
 - Find a way to give the error page a localized message switching with the real error
-- Add a static log-level and overcharge `console.level` with it
-- Add a local db for persistance in BSON
-- Add social with FriendStatus -> For accuracy, we need to find a way to check that ED is open
+- Add a static log-level and overcharge `console.level` with it (checkout [winston](https://github.com/winstonjs/winston))
+- Integrate SSE, either by sending only event to recall from client api, or by sending the data
+- Integrate persistance (maybe lowdb or duckdb)
+- Migrate to yarn pnp
 
 ## To study
 
 replace nodemon by tsx watch & chokidar
 Add a music tracker (not sure if pertinent)
+pertinance of [swc](https://swc.rs/)
+Add social with FriendStatus -> For accuracy, we need to find a way to check that ED is open
 
 ### React + TypeScript + Vite
 

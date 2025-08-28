@@ -10,7 +10,6 @@ export class HelloController {
 		lang: string;
 	}> {
 		console.log("getHello");
-		// const fileHeader = getFileHeader();
 		const lang: string = getLanguage();
 
 		return {
