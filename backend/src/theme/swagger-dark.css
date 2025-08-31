@@ -1,5 +1,5 @@
 body {
-    background: radial-gradient(#021027, #000) !important;
+    background: radial-gradient(#05265b, #000) !important;
 
     span:not(pre span),
     p,
@@ -14,7 +14,7 @@ body {
     .opblock-section-header,
 
     .opblock-section-header {
-        background: #021027 !important;
+        background: transparent !important;
     }
 
     .scheme-container {

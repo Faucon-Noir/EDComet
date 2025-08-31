@@ -10,14 +10,15 @@ import { FileHeader } from "../../../shared/types/fileHeader.type";
 dotenv.config();
 const logFile = getLatestLogFile();
 const content = fs.readFileSync(logFile, "utf8");
-const lines = content.split("\n").filter((line) => line.trim().length > 0);
+const lines = content
+	.split("\n")
+	.filter((line): boolean => line.trim().length > 0);
 
 export function getLatestLogFile(): string | null {
 	const logPaths = getLogsPath();
-
 	const files = fs
 		.readdirSync(logPaths)
-		.filter((f) => /^Journal\..*\.log$/.test(f));
+		.filter((f): boolean => /^Journal\..*\.log$/.test(f));
 	if (files.length === 0) return null;
 	files.sort((a, b) => {
 		const dateA = a.split(".")[1];

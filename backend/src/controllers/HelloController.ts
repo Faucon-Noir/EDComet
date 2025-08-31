@@ -1,4 +1,4 @@
-import { Get, Route, Tags } from "tsoa";
+import { Delete, Get, Patch, Post, Put, Route, Tags } from "tsoa";
 import { getLanguage } from "../utils/utils";
 
 @Route("hello")
@@ -16,5 +16,21 @@ export class HelloController {
 			message: "Hello from ED COMET 🚀",
 			lang: lang,
 		};
+	}
+	@Post("/")
+	public async postHello() {
+		console.log("sting");
+	}
+	@Put("/")
+	public async putHello() {
+		console.log("sting");
+	}
+	@Patch("/")
+	public async patchHello() {
+		console.log("sting");
+	}
+	@Delete("/")
+	public async delHello() {
+		console.log("sting");
 	}
 }

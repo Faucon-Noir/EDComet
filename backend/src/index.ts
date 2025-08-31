@@ -44,7 +44,7 @@ try {
 	console.log("❌ No logs available", error);
 }
 
-const server = app.listen(PORT, "0.0.0.0", () => {
+const server = app.listen(PORT, (): void => {
 	return (
 		console.log(`👀 Express is listening at ${process.env.CLIENT_URL}`),
 		console.log(

@@ -7,7 +7,8 @@ const theme = createTheme({
 			disabled: "#FFFFFFDE",
 		},
 		primary: {
-			main: "#021027",
+			// main: "#021027",
+			main: "#05265b",
 		},
 		secondary: {
 			main: "#000000",
@@ -35,7 +36,8 @@ const theme = createTheme({
 					textRendering: "optimizeLegibility",
 					WebkitFontSmoothing: "antialiased",
 					MozOsxFontSmoothing: "grayscale",
-					background: "radial-gradient(#021027, #000000)",
+					// background: "radial-gradient(#021027, #000000)",
+					background: "radial-gradient(#05265b, #000000)",
 				},
 				body: {
 					margin: 0,
@@ -44,7 +46,8 @@ const theme = createTheme({
 					minWidth: "400px",
 					minHeight: "100vh",
 					fontFamily: "'SansationLight', sans-serif !important",
-					background: "radial-gradient(#021027, #000)",
+					// background: "radial-gradient(#021027, #000)",
+					background: "radial-gradient(#05265b, #000000)",
 				},
 				input: {
 					border: "1px solid #fff",
