@@ -25,14 +25,19 @@ export function getLogsPath(): string | null {
 }
 
 export function getLanguage(): string {
-	const language = getFileHeader().language;
-	console.log(language);
-	switch (language) {
-		case "English/UK":
-			return "en";
-		case "French/FR":
-			return "fr";
-		default:
-			return "en";
+	try {
+		const language = getFileHeader().language;
+		console.log(language); 
+		switch (language) {
+			case "English/UK":
+				return "en";
+			case "French/FR":
+				return "fr";
+			default:
+				return "en";
+		}
+	} catch (error) {
+		console.warn("⚠️ Error fetching Language:", error.message);
+		return "en";
 	}
 }

@@ -2,6 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import dotenv from "dotenv";
 import { getLogsPath } from "../utils/utils";
+import { LogFileWatcher } from "../utils/watcher";
 import { EventEnum } from "../../../shared/types/enum";
 import { ShipLoadout } from "../../../shared/types/ship.type";
 import { ColonisationConstructionDepot } from "../../../shared/types/colonisation.type";
@@ -14,6 +15,32 @@ const lines = content
 	.split("\n")
 	.filter((line): boolean => line.trim().length > 0);
 
+let latestLoadout: ShipLoadout | null = null;
+let latestDepot: ColonisationConstructionDepot | null = null;
+let latestFileHeader: FileHeader | null = null;
+
+const watcher = new LogFileWatcher();
+watcher.on("line", (line: string) => {
+	try {
+		const event = JSON.parse(line);
+		if (event.event === EventEnum.Loadout) {
+			latestLoadout = event as ShipLoadout;
+		}
+		if (event.event === EventEnum.ColonisationConstructionDepot) {
+			latestDepot = event as ColonisationConstructionDepot;
+		}
+		if (event.event === EventEnum.FileHeader) {
+			latestFileHeader = event as FileHeader;
+		}
+	} catch (err) {
+		console.log("⚠️ Watch error", err.message);
+	}
+});
+
+/**
+ * A function to get the LatestLogFile path
+ * @returns A string containing the path of the LatestLogFile
+ */
 export function getLatestLogFile(): string | null {
 	const logPaths = getLogsPath();
 	const files = fs
@@ -35,59 +62,97 @@ export function getLatestLogFile(): string | null {
  */
 export function getLoadout(): ShipLoadout | null {
 	if (!logFile) return null;
+	if (latestLoadout != null) {
+		return latestLoadout;
+	}
+	let lastLoadout: ShipLoadout | null = null;
 	for (const line of lines) {
 		try {
 			const event = JSON.parse(line);
 			if (event.event === EventEnum.Loadout) {
-				return event as ShipLoadout;
+				lastLoadout = event as ShipLoadout;
 			}
 		} catch (err) {
-			console.warn("⚠️ Loadout Interpreter", err);
-			continue;
+			console.warn("⚠️ Loadout Interpreter", err.message);
 		}
 	}
-	return null;
+	console.log(
+		"✅ Found Loadout event:",
+		lastLoadout.Ship,
+		lastLoadout.CargoCapacity
+	);
+	return lastLoadout;
 }
 
 /**
  * A function to get the latest ConstructionDepot where the commander docked
- * @returns An object, either of type ColonisationConstructionDepot or empty
+ * @returns An object, either of type ColonisationConstructionDepot or null
  */
 export function getLatestConstructionDepot(): ColonisationConstructionDepot | null {
 	if (!logFile) return null;
-	for (const line of lines) {
-		try {
-			const event = JSON.parse(line);
-			if (event.event === EventEnum.ColonisationConstructionDepot) {
-				console.log(
-					"✅Found ColonisationConstructionDepot event:",
-					event
-				);
-				return event as ColonisationConstructionDepot;
-			}
-		} catch (err) {
-			console.warn("⚠️ Latest Construction Interpreter:", err);
-			continue;
-		}
+	if (latestDepot != null) {
+		return latestDepot;
 	}
-	return null;
+	let lastDepot: ColonisationConstructionDepot | null = null;
+	try {
+		for (const line of lines) {
+			try {
+				const event = JSON.parse(line);
+				if (event.event === EventEnum.ColonisationConstructionDepot) {
+					lastDepot = event as ColonisationConstructionDepot;
+				}
+			} catch (err) {
+				console.warn("⚠️ Latest Construction foreach:", err.message);
+				continue;
+			}
+		}
+		console.log(
+			"✅ Found ColonisationConstructionDepot event:",
+			lastDepot.MarketID,
+			lastDepot.ConstructionProgress * 100,
+			lastDepot.timestamp
+		);
+	} catch (error) {
+		console.warn("⚠️ Latest Construction Interpreter:", error.message);
+		return null;
+	}
+
+	return lastDepot;
 }
 
+/**
+ * A function to get the latest FileHeader and its payload
+ * @returns An object, either of type FileHeader or null
+ */
 export function getFileHeader(): FileHeader | null {
 	if (!logFile) return null;
-	// if (!fileHeader) {
-	// 	console.warn("⚠️ No FileHeader found in logs, defaulting to 'en'");
-	// }
-	for (const line of lines) {
-		try {
-			const event = JSON.parse(line);
-			if (event.event === EventEnum.FileHeader) {
-				return event as FileHeader;
-			}
-		} catch (err) {
-			console.warn("⚠️ File Header Interpreter:", err);
-			continue;
-		}
+	if (latestFileHeader != null) {
+		return latestFileHeader;
 	}
-	return null;
+	let lastFileHeader: FileHeader | null = null;
+	try {
+		for (const line of lines) {
+			try {
+				const event = JSON.parse(line);
+				if (event.event === EventEnum.FileHeader) {
+					lastFileHeader = event as FileHeader;
+				}
+
+			} catch (err) {
+				console.warn("⚠️ File Header foreach:", err.message);
+				continue;
+			}
+		}
+		console.log(
+			"✅ Found FileHeader event:",
+			lastFileHeader.gameversion,
+			lastFileHeader.language,
+			lastFileHeader.timestamp
+		);
+	} catch (error) {
+		console.warn("⚠️ File Header Interpreter:", error.message);
+		return null;
+	}
+
+	return lastFileHeader;
 }

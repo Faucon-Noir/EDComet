@@ -2,7 +2,7 @@ import { EventEnum } from "./enum";
 
 // Colonisation
 export interface ColonisationConstructionDepot {
-	timestamp: string;
+	timestamp: Date;
 	event: EventEnum.ColonisationConstructionDepot;
 	MarketID: number;
 	ConstructionProgress: number;
@@ -17,4 +17,10 @@ export interface ColonisationConstructionDepotResource {
 	RequiredAmount: number;
 	ProvidedAmount: number;
 	Payment: number;
+}
+
+export interface ColonisationStats {
+	travels: number;
+	estimatedPayment: number;
+	totalUnitsRequired: number;
 }

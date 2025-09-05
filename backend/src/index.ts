@@ -35,13 +35,13 @@ try {
 	const logsAvailable = getLatestLogFile();
 	if (logsAvailable != null) console.info("✅ Logs found !");
 } catch (error) {
-	console.log("❌ No logs available", error);
+	console.log("❌ No logs available", error.message);
 }
 
 try {
 	if (swaggerDocument != null) console.info("✅ swagger file found !");
 } catch (error) {
-	console.log("❌ No logs available", error);
+	console.log("❌ No logs available", error.message);
 }
 
 const server = app.listen(PORT, (): void => {

@@ -9,12 +9,12 @@ import { CssBaseline } from "@mui/material";
 import "./assets/locale/i18n.ts";
 
 createRoot(document.getElementById("root")!).render(
-	<StrictMode>
-		<ThemeProvider theme={theme}>
-			<CssBaseline />
-			<Router>
-				<App />
-			</Router>
-		</ThemeProvider>
-	</StrictMode>
+  <StrictMode>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Router>
+        <App />
+      </Router>
+    </ThemeProvider>
+  </StrictMode>
 );

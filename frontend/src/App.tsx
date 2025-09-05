@@ -16,7 +16,6 @@ function App() {
 	useEffect(() => {
 		apiInstance.getHello()
 			.then(res => {
-				console.log('Data:', res.data.lang);
 				i18next.changeLanguage(res.data.lang);
 			})
 			.catch(err => {

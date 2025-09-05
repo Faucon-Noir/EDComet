@@ -9,13 +9,16 @@ export class HelloController {
 		message: string;
 		lang: string;
 	}> {
-		console.log("getHello");
 		const lang: string = getLanguage();
 
 		return {
 			message: "Hello from ED COMET 🚀",
 			lang: lang,
 		};
+	}
+	@Get("/lang")
+	public async getLanguage() {
+		return getLanguage();
 	}
 	@Post("/")
 	public async postHello() {
