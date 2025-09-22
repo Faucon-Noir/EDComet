@@ -1,15 +1,17 @@
-import {  Construction, Home, Ship, Test } from "../pages/paths";
+import { Construction, Contribute, Home, Ship, Test } from "../pages/paths";
+import { NavItemType } from "./type";
 
-export const navItem = [
-	{ name: "home", link: Home },
-	{ name: "construction", link: Construction },
-	{ name: "ship", link: Ship },
-	{ name: "test", link: Test },
+export const navItem: NavItemType[]= [
+	{ nav: "home", link: Home },
+	{ nav: "construction", link: Construction },
+	{ nav: "ship", link: Ship },
+	{ nav: "contribute", link: Contribute },
+	{ nav: "test", link: Test },
 ];
 
 export const lang = [
-	{ name: "FR", link: "fr" },
-	{ name: "EN", link: "en" },
+	{ lang: "FR", link: "fr" },
+	{ lang: "EN", link: "en" },
 ];
 
- export const display = ["construction", "ship", "systems"];
+export const display = ["construction", "ship", "systems"];

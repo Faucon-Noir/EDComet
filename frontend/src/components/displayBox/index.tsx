@@ -8,11 +8,7 @@ const DisplayBox = ({ text, items }: any) => {
 		<Box sx={WrapperBoxStyle}>
 			<Box sx={MainBoxStyle}>
 				{text}
-				{items ? (
-					<div>{t("wip")}</div>
-				) : (
-					<div>Something to Display</div>
-				)}
+				{items ? <div>{t("ongoing")}</div> : <div>{t("wip")}</div>}
 			</Box>
 			<List></List>
 		</Box>

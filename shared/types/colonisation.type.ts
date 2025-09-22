@@ -23,4 +23,5 @@ export interface ColonisationStats {
 	travels: number;
 	estimatedPayment: number;
 	totalUnitsRequired: number;
+	remainingTravels: number;
 }

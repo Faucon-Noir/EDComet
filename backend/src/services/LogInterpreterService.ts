@@ -9,9 +9,9 @@ import { ColonisationConstructionDepot } from "../../../shared/types/colonisatio
 import { FileHeader } from "../../../shared/types/fileHeader.type";
 
 dotenv.config();
-const logFile = getLatestLogFile();
-const content = fs.readFileSync(logFile, "utf8");
-const lines = content
+const logFile: string = getLatestLogFile();
+const content: string = fs.readFileSync(logFile, "utf8");
+const lines: string[] = content
 	.split("\n")
 	.filter((line): boolean => line.trim().length > 0);
 
@@ -137,7 +137,6 @@ export function getFileHeader(): FileHeader | null {
 				if (event.event === EventEnum.FileHeader) {
 					lastFileHeader = event as FileHeader;
 				}
-
 			} catch (err) {
 				console.warn("⚠️ File Header foreach:", err.message);
 				continue;

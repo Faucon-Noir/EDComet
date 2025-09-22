@@ -14,7 +14,7 @@ export const Header: React.FC = () => {
 			<Box sx={NavStyle}>
 				{navItem.map((item, index: number) => (
 					<h2 key={index} style={{ margin: "0 2.5%" }}>
-						<Link href={item.link}>{t(item.name)}</Link>
+						<Link href={item.link}>{t(item.nav)}</Link>
 					</h2>
 				))}
 			</Box>

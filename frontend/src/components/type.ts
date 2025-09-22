@@ -1,1 +1,2 @@
-export type NavItemType = () => { name: string; link: string }[];
+export type NavItemType = { nav: string; link: string };
+export type LanguageType = { lang: string; link: string };
