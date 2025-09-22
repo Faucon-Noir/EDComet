@@ -6,7 +6,7 @@ import TestPage from "./Test";
 import ErrorComponent from "../components/error";
 import ShipPage from "./Ship";
 import ConstructionPage from "./Construction";
-import ContributionPage from "./Contribution";
+import ContributePage from "./Contribute";
 
 const Pages = () => {
   return (
@@ -17,8 +17,8 @@ const Pages = () => {
         <Route path={Construction} element={<ConstructionPage />} />
         <Route path={Home} element={<HomePage />} />
         <Route path={Ship} element={<ShipPage />} />
+        <Route path={Contribute} element={<ContributePage />} />
         <Route path={Test} element={<TestPage />} />
-        <Route path={Contribute} element={<ContributionPage />} />
       </Route>
     </Routes>
   );

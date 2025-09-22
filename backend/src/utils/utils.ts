@@ -19,7 +19,7 @@ export function getLogsPath(): string | null {
 	if (fs.existsSync(edPath)) {
 		return edPath;
 	} else {
-		console.warn("⚠️ Dossier Elite Dangerous introuvable:", edPath);
+		console.warn("🚧 Dossier Elite Dangerous introuvable:", edPath);
 		return null;
 	}
 }
@@ -37,7 +37,7 @@ export function getLanguage(): string {
 				return "en";
 		}
 	} catch (error) {
-		console.warn("⚠️ Error fetching Language:", error.message);
+		console.warn("🚧 Error fetching Language:", error.message);
 		return "en";
 	}
 }

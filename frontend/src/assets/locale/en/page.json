@@ -1,45 +1,54 @@
 {
-	"admin": {
-		"dashboard": {
-			"title": "Dashboard",
-			"markets": "Markets",
-			"ship": "Ship",
-			"systems": "Systems"
-		},
-		"warning": "Please note that you are in a secure zone. Any unauthorized action will be recorded."
-	},
-	"home": {
-		"title": "ED Comet",
-		"description": "Welcome to ED Comet, the Construction Market & Exploration Tool",
-		"construction": "Constructions Site",
-		"ship": "Ship",
-		"systems": "Systems"
-	},
-	"ship": {
-		"title": "Your ship",
-		"description": "Here you will find information about your ships, and can select which one you want to use for transportation"
-	},
-	"construction": {
-		"title": "Your construction projects",
-		"description": "Here you will find information about your construction projects, such as their status, progress, ressources required, and more.",
-		"stats":{
-			"estimatedPayment": "Estimated payment",
-			"resourcesRequired": "Resources required",
-			"travelsRequired": "Travels required",
-			"remainingTravels": "Remaining travels"
-		}
-	},
-	"contribute": {
-		"title": "Contribute to ED Comet",
-		"description": "Help us improve ED Comet by contributing data, code, or feedback. Your contributions are valuable to us and the community.",
-		"translate": {
-			"title": "Translate ED Comet",
-			"text": "If you are fluent in any language and would like to help translate ED Comet, please visit our GitHub repository. We welcome contributions in all languages!",
-			"link": "Join the translation effort on GitHub"
-		},
-		"getStarted": "To get started, visit our GitHub page or contact us directly. We appreciate your support in making ED Comet a better tool for everyone!"
-	},
-	"test":{
-		"title": "Test Page"
-	}
+  "admin": {
+    "dashboard": {
+      "title": "Dashboard",
+      "markets": "Markets",
+      "ship": "Ship",
+      "systems": "Systems"
+    },
+    "warning": "Please note that you are in a secure zone. Any unauthorized action will be recorded."
+  },
+  "home": {
+    "title": "ED Comet",
+    "description": "Welcome to ED Comet, the Construction Market & Exploration Tool",
+    "construction": "Constructions Site",
+    "ship": "Ship",
+    "systems": "Systems"
+  },
+  "ship": {
+    "title": "Your ship",
+    "description": "Here you will find information about your ships, and can select which one you want to use for transportation"
+  },
+  "construction": {
+    "title": "Your construction projects",
+    "description": "Here you will find information about your construction projects, such as their status, progress, ressources required, and more.",
+    "stats": {
+      "estimatedPayment": "Estimated payment",
+      "resourcesRequired": "Resources required",
+      "travelsRequired": "Travels required",
+      "remainingTravels": "Remaining travels"
+    }
+  },
+  "contribute": {
+    "title": "Contribute to ED Comet",
+    "description": "Help us improve ED Comet by contributing data, code, or feedback. Your contributions are valuable to us and the community.",
+    "translate": {
+      "title": "Translate ED Comet",
+      "text": "If you are fluent in any language and would like to help translate ED Comet, please visit our GitHub repository. We welcome contributions in all languages!",
+      "link": "Join the translation effort on GitHub"
+    },
+    "getStarted": "To get started, visit our GitHub page or contact us directly. We appreciate your support in making ED Comet a better tool for everyone!"
+  },
+  "contribute": {
+    "title": "Contribute to ED Comet",
+    "description": "Find out how you can help improve ED Comet, report issues, suggest features, or contribute code.",
+    "translate": {
+      "title": "Help us translate ED Comet into more languages.",
+      "text": "ED Comet is available in multiple languages, but we need your help to make it even better. If you are fluent in another language and would like to help us translate the app, feel free to open a pull request on our GitHub repository.",
+      "linkText": "Join our translation team"
+    }
+  },
+  "test": {
+    "title": "Test Page"
+  }
 }

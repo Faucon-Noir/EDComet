@@ -75,7 +75,7 @@ const ConstructionPage: React.FC = () => {
     { label: "stats.travelsRequired", value: travels },
     { label: "stats.remainingTravels", value: remainingTravels },
   ];
-  
+
   const handleToggle = (name: string) => () => {
     const currentIndex = checked.indexOf(name);
     const newChecked = [...checked];
@@ -105,7 +105,7 @@ const ConstructionPage: React.FC = () => {
         {statsList.map((stat, index) => (
           <span key={stat.label}>
             {t(stat.label)} {stat.value}
-            {index < (statsList.length-1) && " | "}
+            {index < statsList.length - 1 && " | "}
           </span>
         ))}
       </Box>

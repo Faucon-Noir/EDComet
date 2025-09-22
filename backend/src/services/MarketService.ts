@@ -1,3 +1,6 @@
+import { EventEnum } from "../../../shared/types/enum";
+import { ShipLoadout } from "../../../shared/types/ship.type";
+import { LogFileWatcher } from "../utils/watcher";
 import {
   ColonisationConstructionDepotResource,
   ColonisationStats,
@@ -7,7 +10,21 @@ import {
   getLoadout,
 } from "./LogInterpreterService";
 
-// Process EDDN API requests and responses & market data handling, such as fetching market price, hilighting required ressources etc
+// Process Ardent API requests and responses & market data handling, such as fetching market price, hilighting required ressources etc
+let latestLoadout: ShipLoadout | null = null
+
+const watcher = new LogFileWatcher();
+watcher.on("line", (line: string) => {
+	try {
+		const event = JSON.parse(line);
+		if (event.event === EventEnum.Loadout) {
+			latestLoadout = event as ShipLoadout;
+		}
+	} catch (err) {
+		console.log("🚧 Watch error", err.message);
+	}
+});
+
 export function calculateLatestSiteStats(): ColonisationStats | null {
   try {
     const data: ColonisationConstructionDepotResource[] =
@@ -30,7 +47,7 @@ export function calculateLatestSiteStats(): ColonisationStats | null {
       totalUnitsRequired / getLoadout().CargoCapacity
     );
     const remainingTravels: number = Math.ceil(
-      (totalUnitsRemaining-49214) / getLoadout().CargoCapacity
+      (totalUnitsRemaining) / getLoadout().CargoCapacity
     );
 
     return {
@@ -39,8 +56,8 @@ export function calculateLatestSiteStats(): ColonisationStats | null {
       totalUnitsRequired,
       remainingTravels,
     };
-  } catch (error) {
-    console.warn("⚠️ Calculate Latest Site Stats:", error.message);
-    return null;
-  }
+	} catch (error) {
+		console.warn("🚧 Calculate Latest Site Stats:", error.message);
+		return null;
+	}
 }

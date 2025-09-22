@@ -1,15 +1,16 @@
 {
-	"title": "ED Comet",
-	"header": {
-		"construction": "Construction",
-		"home": "Home",
-		"ship": "Ship",
-		"test": "Test"
-	},
-	"components": {
-		"error": {
-			"text": "An error occured: {{errorMsg}}"
-		},
-		"wip": "Work in progress"
-	}
+  "title": "ED Comet",
+  "header": {
+    "construction": "Construction",
+    "contribute": "Contribute",
+    "home": "Home",
+    "ship": "Ship",
+    "test": "Test"
+  },
+  "components": {
+    "error": {
+      "text": "An error occured: {{errorMsg}}"
+    },
+    "wip": "Work in progress"
+  }
 }

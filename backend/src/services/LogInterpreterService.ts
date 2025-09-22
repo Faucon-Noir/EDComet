@@ -33,7 +33,7 @@ watcher.on("line", (line: string) => {
 			latestFileHeader = event as FileHeader;
 		}
 	} catch (err) {
-		console.log("⚠️ Watch error", err.message);
+		console.log("🚧 Watch error", err.message);
 	}
 });
 
@@ -73,7 +73,7 @@ export function getLoadout(): ShipLoadout | null {
 				lastLoadout = event as ShipLoadout;
 			}
 		} catch (err) {
-			console.warn("⚠️ Loadout Interpreter", err.message);
+			console.warn("🚧 Loadout Interpreter", err.message);
 		}
 	}
 	console.log(
@@ -102,7 +102,7 @@ export function getLatestConstructionDepot(): ColonisationConstructionDepot | nu
 					lastDepot = event as ColonisationConstructionDepot;
 				}
 			} catch (err) {
-				console.warn("⚠️ Latest Construction foreach:", err.message);
+				console.warn("🚧 Latest Construction foreach:", err.message);
 				continue;
 			}
 		}
@@ -113,7 +113,7 @@ export function getLatestConstructionDepot(): ColonisationConstructionDepot | nu
 			lastDepot.timestamp
 		);
 	} catch (error) {
-		console.warn("⚠️ Latest Construction Interpreter:", error.message);
+		console.warn("🚧 Latest Construction Interpreter:", error.message);
 		return null;
 	}
 
@@ -138,7 +138,7 @@ export function getFileHeader(): FileHeader | null {
 					lastFileHeader = event as FileHeader;
 				}
 			} catch (err) {
-				console.warn("⚠️ File Header foreach:", err.message);
+				console.warn("🚧 File Header foreach:", err.message);
 				continue;
 			}
 		}
@@ -149,7 +149,7 @@ export function getFileHeader(): FileHeader | null {
 			lastFileHeader.timestamp
 		);
 	} catch (error) {
-		console.warn("⚠️ File Header Interpreter:", error.message);
+		console.warn("🚧 File Header Interpreter:", error.message);
 		return null;
 	}
 
