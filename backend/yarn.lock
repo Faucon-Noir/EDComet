@@ -5,6 +5,15 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
+"@cyclonedx/yarn-plugin-cyclonedx@npm:^3.1.2":
+  version: 3.1.2
+  resolution: "@cyclonedx/yarn-plugin-cyclonedx@npm:3.1.2"
+  bin:
+    cyclonedx-yarn: bin/cyclonedx-yarn-cli.js
+  checksum: 10c0/fa7d71df0c24a5b87cd6308241b9f1fc3abdb52de01f02a3e243b3c9bed12e799f61c636a7ae948bf08aea4c6b69bc2dbff4bd7c2de0969ab78c2122f6804fdc
+  languageName: node
+  linkType: hard
+
 "@esbuild/aix-ppc64@npm:0.25.9":
   version: 0.25.9
   resolution: "@esbuild/aix-ppc64@npm:0.25.9"
@@ -1369,6 +1378,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "ed-comet-backend@workspace:."
   dependencies:
+    "@cyclonedx/yarn-plugin-cyclonedx": "npm:^3.1.2"
     "@types/cors": "npm:^2.8.19"
     "@types/node": "npm:^24.3.0"
     "@types/swagger-ui-express": "npm:^4.1.8"

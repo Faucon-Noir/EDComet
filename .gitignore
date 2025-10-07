@@ -235,3 +235,6 @@ openapitools.json
 
 # Yarn
 */.yarn/*
+
+# SBOM Related
+**/sbom/

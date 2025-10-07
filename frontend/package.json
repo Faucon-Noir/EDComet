@@ -28,6 +28,7 @@
     "vite-plugin-react-devtools": "^0.0.0-alpha.1"
   },
   "devDependencies": {
+    "@cyclonedx/yarn-plugin-cyclonedx": "^3.1.2",
     "@eslint/js": "^9.9.0",
     "@openapitools/openapi-generator-cli": "^2.23.1",
     "@types/node": "^24.3.0",

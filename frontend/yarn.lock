@@ -233,6 +233,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@cyclonedx/yarn-plugin-cyclonedx@npm:^3.1.2":
+  version: 3.1.2
+  resolution: "@cyclonedx/yarn-plugin-cyclonedx@npm:3.1.2"
+  bin:
+    cyclonedx-yarn: bin/cyclonedx-yarn-cli.js
+  checksum: 10c0/fa7d71df0c24a5b87cd6308241b9f1fc3abdb52de01f02a3e243b3c9bed12e799f61c636a7ae948bf08aea4c6b69bc2dbff4bd7c2de0969ab78c2122f6804fdc
+  languageName: node
+  linkType: hard
+
 "@emotion/babel-plugin@npm:^11.13.5":
   version: 11.13.5
   resolution: "@emotion/babel-plugin@npm:11.13.5"
@@ -2554,6 +2563,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "ed-comet@workspace:."
   dependencies:
+    "@cyclonedx/yarn-plugin-cyclonedx": "npm:^3.1.2"
     "@emotion/react": "npm:^11.13.5"
     "@emotion/styled": "npm:^11.13.5"
     "@eslint/js": "npm:^9.9.0"
