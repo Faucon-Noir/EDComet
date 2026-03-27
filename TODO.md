@@ -7,15 +7,14 @@
 - Integrate fs.watch of the ED Journal folder
 - Integrate SSE, either by sending only event to recall from client api, or by sending the data
 - Integrate persistance (maybe lowdb or duckdb)
-- Migrate to yarn pnp
 
 ## To study
 
 replace nodemon by tsx watch & chokidar
 Add a music tracker (not sure if pertinent)
 pertinance of [swc](https://swc.rs/)
-Add social with FriendStatus -> For accuracy, we need to find a way to check that ED is open
+Add social with FriendStatus -> For accuracy, we need to checkout if ED logs the friends statuses, and not only the connected, disconnected
 
 ### Chokidar
 
-"client:watch": "chokidar '../backend/src/generated/swagger.json' -c 'yarn gen:client'",
+"client:watch": "chokidar '../backend/src/generated/swagger.json' -c 'pnpm run gen:client'",

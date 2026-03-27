@@ -1,29 +1,28 @@
 {
-  "name": "ed-comet-backend",
-  "packageManager": "yarn@4.5.2",
-  "scripts": {
-    "dev": "nodemon",
-    "open-index": "open-cli ./coverage/lcov-report/index.html",
-    "test": "jest ./src/tests/Index.test.ts --runInBand --detectOpenHandles --coverage || npm run open-index",
-    "tsoa:gen": "tsx ./src/scripts/preTsoaGen.ts && yarn tsoa spec && echo \"✅ tsoa spec generated\" && yarn tsoa routes && echo \"✅ tsoa routes generated\" && cd ../frontend && yarn client:gen"
-  },
-  "dependencies": {
-    "class-transformer": "^0.5.1",
-    "class-validator": "^0.14.2",
-    "cors": "^2.8.5",
-    "dotenv": "^17.2.1",
-    "express": "^5.1.0",
-    "routing-controllers": "^0.11.3"
-  },
-  "devDependencies": {
-    "@cyclonedx/yarn-plugin-cyclonedx": "^3.1.2",
-    "@types/cors": "^2.8.19",
-    "@types/node": "^24.3.0",
-    "@types/swagger-ui-express": "^4.1.8",
-    "nodemon": "^3.1.10",
-    "swagger-ui-express": "^5.0.1",
-    "tsoa": "^6.6.0",
-    "tsx": "^4.20.5",
-    "typescript": "^5.9.2"
-  }
+	"name": "ed-comet-backend",
+	"packageManager": "pnpm@10.11.1",
+	"scripts": {
+		"dev": "nodemon",
+		"open-index": "open-cli ./coverage/lcov-report/index.html",
+		"test": "jest ./src/tests/Index.test.ts --runInBand --detectOpenHandles --coverage || pnpm run open-index",
+		"tsoa:gen": "tsx ./src/scripts/preTsoaGen.ts && tsoa spec && echo \"✅ tsoa spec generated\" && tsoa routes && echo \"✅ tsoa routes generated\" && pnpm --dir ../frontend run client:gen"
+	},
+	"dependencies": {
+		"class-transformer": "^0.5.1",
+		"class-validator": "^0.14.2",
+		"cors": "^2.8.5",
+		"dotenv": "^17.2.1",
+		"express": "^5.1.0",
+		"routing-controllers": "^0.11.3"
+	},
+	"devDependencies": {
+		"@types/cors": "^2.8.19",
+		"@types/node": "^24.3.0",
+		"@types/swagger-ui-express": "^4.1.8",
+		"nodemon": "^3.1.10",
+		"swagger-ui-express": "^5.0.1",
+		"tsoa": "^6.6.0",
+		"tsx": "^4.20.5",
+		"typescript": "^5.9.2"
+	}
 }

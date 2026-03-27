@@ -1,0 +1,24 @@
+{
+	"name": "ed-comet-workspace",
+	"private": true,
+	"packageManager": "pnpm@10.11.1",
+	"pnpm": {
+		"onlyBuiltDependencies": [
+			"@nestjs/core",
+			"@openapitools/openapi-generator-cli",
+			"esbuild"
+		],
+		"ignoredBuiltDependencies": [
+			"@scarf/scarf"
+		]
+	},
+	"scripts": {
+		"dev:backend": "pnpm --filter ed-comet-backend run dev",
+		"dev:frontend": "pnpm --filter ed-comet run dev",
+		"build": "pnpm --filter ed-comet run build",
+		"lint": "pnpm --filter ed-comet run lint",
+		"test": "pnpm --filter ed-comet-backend run test",
+		"client:gen": "pnpm --filter ed-comet run client:gen",
+		"tsoa:gen": "pnpm --filter ed-comet-backend run tsoa:gen"
+	}
+}

@@ -1,21 +1,16 @@
-import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { Configuration } from "../../api/configuration";
-import {
-  ColonisationConstructionDepot,
-  ColonisationConstructionDepotResource,
-  ColonisationStats,
-  ConstructionApi,
-  HelloApi,
-} from "../../api";
-import LinearProgressWithLabel from "@mui/material/LinearProgress";
-import Box from "@mui/material/Box";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import Checkbox from "@mui/material/Checkbox";
-import ListItemText from "@mui/material/ListItemText";
-import ListItemButton from "@mui/material/ListItemButton";
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Configuration } from '../../api/configuration';
+import { ColonisationConstructionDepot, ColonisationConstructionDepotResource, ColonisationStats, ConstructionApi, HelloApi } from '../../api';
+import LinearProgressWithLabel from '@mui/material/LinearProgress';
+import Box from '@mui/material/Box';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Checkbox from '@mui/material/Checkbox';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemButton from '@mui/material/ListItemButton';
+import { MainBoxStyle, WrapperBoxStyle } from './style';
 
 const ConstructionPage: React.FC = () => {
   const { t } = useTranslation("page", { keyPrefix: "construction" });

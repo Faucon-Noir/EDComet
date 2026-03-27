@@ -2,5 +2,5 @@
 	"watch": ["src/", "../shared/"],
 	"ext": "ts",
 	"ignore": ["*/routes.ts", "*/swagger.json"],
-	"exec": "yarn tsoa:gen && tsx ./src/index.ts"
+	"exec": "pnpm run tsoa:gen && tsx ./src/index.ts"
 }
