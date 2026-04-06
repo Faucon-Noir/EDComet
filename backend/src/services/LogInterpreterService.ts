@@ -3,10 +3,7 @@ import * as path from "path";
 import dotenv from "dotenv";
 import { getLogsPath } from "../utils/utils";
 import { LogFileWatcher } from "../utils/watcher";
-import { EventEnum } from "../../../shared/types/enum";
-import { ShipLoadout } from "../../../shared/types/ship.type";
-import { ColonisationConstructionDepot } from "../../../shared/types/colonisation.type";
-import { FileHeader } from "../../../shared/types/fileHeader.type";
+import { EventEnum, ShipLoadout, ColonisationConstructionDepot, FileHeader, getErrorMessage } from "ed-shared";
 
 dotenv.config();
 const logFile: string = getLatestLogFile();
@@ -32,7 +29,7 @@ watcher.on("line", (line: string) => {
 		if (event.event === EventEnum.FileHeader) {
 			latestFileHeader = event as FileHeader;
 		}
-	} catch (err) {
+	} catch (err: any) {
 		console.log("🚧 Watch error", err.message);
 	}
 });
@@ -40,13 +37,19 @@ watcher.on("line", (line: string) => {
 /**
  * A function to get the LatestLogFile path
  * @returns A string containing the path of the LatestLogFile
+ * @throws Error when logs path is unavailable or no journal log file is found
  */
-export function getLatestLogFile(): string | null {
+export function getLatestLogFile(): string {
 	const logPaths = getLogsPath();
+	if (!logPaths) {
+		throw new Error("Logs path is unavailable.");
+	}
 	const files = fs
 		.readdirSync(logPaths)
 		.filter((f): boolean => /^Journal\..*\.log$/.test(f));
-	if (files.length === 0) return null;
+	if (files.length === 0) {
+		throw new Error("No journal log file found in logs path.");
+	}
 	files.sort((a, b) => {
 		const dateA = a.split(".")[1];
 		const dateB = b.split(".")[1];
@@ -72,9 +75,12 @@ export function getLoadout(): ShipLoadout | null {
 			if (event.event === EventEnum.Loadout) {
 				lastLoadout = event as ShipLoadout;
 			}
-		} catch (err) {
-			console.warn("🚧 Loadout Interpreter", err.message);
+		} catch (err: unknown) {
+			console.warn("🚧 Loadout Interpreter", getErrorMessage(err));
 		}
+	}
+	if (!lastLoadout) {
+		return null;
 	}
 	console.log(
 		"✅ Found Loadout event:",
@@ -101,10 +107,13 @@ export function getLatestConstructionDepot(): ColonisationConstructionDepot | nu
 				if (event.event === EventEnum.ColonisationConstructionDepot) {
 					lastDepot = event as ColonisationConstructionDepot;
 				}
-			} catch (err) {
-				console.warn("🚧 Latest Construction foreach:", err.message);
+			} catch (err: unknown) {
+				console.warn("🚧 Latest Construction foreach:", getErrorMessage(err));
 				continue;
 			}
+		}
+		if (!lastDepot) {
+			return null;
 		}
 		console.log(
 			"✅ Found ColonisationConstructionDepot event:",
@@ -112,8 +121,8 @@ export function getLatestConstructionDepot(): ColonisationConstructionDepot | nu
 			lastDepot.ConstructionProgress * 100,
 			lastDepot.timestamp
 		);
-	} catch (error) {
-		console.warn("🚧 Latest Construction Interpreter:", error.message);
+	} catch (error: unknown) {
+		console.warn("🚧 Latest Construction Interpreter:", getErrorMessage(error));
 		return null;
 	}
 
@@ -137,10 +146,13 @@ export function getFileHeader(): FileHeader | null {
 				if (event.event === EventEnum.FileHeader) {
 					lastFileHeader = event as FileHeader;
 				}
-			} catch (err) {
-				console.warn("🚧 File Header foreach:", err.message);
+			} catch (err: unknown) {
+				console.warn("🚧 File Header foreach:", getErrorMessage(err));
 				continue;
 			}
+		}
+		if (!lastFileHeader) {
+			return null;
 		}
 		console.log(
 			"✅ Found FileHeader event:",
@@ -148,8 +160,8 @@ export function getFileHeader(): FileHeader | null {
 			lastFileHeader.language,
 			lastFileHeader.timestamp
 		);
-	} catch (error) {
-		console.warn("🚧 File Header Interpreter:", error.message);
+	} catch (error: unknown) {
+		console.warn("🚧 File Header Interpreter:", getErrorMessage(error));
 		return null;
 	}
 

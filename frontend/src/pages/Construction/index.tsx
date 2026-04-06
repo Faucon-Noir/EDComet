@@ -10,7 +10,6 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import Checkbox from '@mui/material/Checkbox';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
-import { MainBoxStyle, WrapperBoxStyle } from './style';
 
 const ConstructionPage: React.FC = () => {
   const { t } = useTranslation("page", { keyPrefix: "construction" });
@@ -46,23 +45,14 @@ const ConstructionPage: React.FC = () => {
     });
   }, []);
 
-  // TODO: Voir si on peut simplifier vu que le traitement est le même
-  const estimatedPayment =
-    stats && typeof stats.estimatedPayment === "number"
-      ? stats.estimatedPayment.toLocaleString(lang)
-      : "N/A";
-  const totalUnitsRequired =
-    stats && typeof stats.totalUnitsRequired === "number"
-      ? stats.totalUnitsRequired.toLocaleString(lang)
-      : "N/A";
-  const travels =
-    stats && typeof stats.travels === "number"
-      ? stats.travels.toLocaleString(lang)
-      : "N/A";
-  const remainingTravels =
-    stats && typeof stats.remainingTravels === "number"
-      ? stats.remainingTravels.toLocaleString(lang)
-      : "N/A";
+  const formatStat = (value: number | undefined): string => {
+    return typeof value === "number" ? value.toLocaleString(lang) : "N/A";
+  };
+
+  const estimatedPayment = formatStat(stats?.estimatedPayment);
+  const totalUnitsRequired = formatStat(stats?.totalUnitsRequired);
+  const travels = formatStat(stats?.travels);
+  const remainingTravels = formatStat(stats?.remainingTravels);
 
   const statsList = [
     { label: "stats.estimatedPayment", value: estimatedPayment },
@@ -140,9 +130,9 @@ const ConstructionPage: React.FC = () => {
                       sx={
                         isChecked
                           ? {
-                              textDecoration: "line-through",
-                              color: "grey.500",
-                            }
+                            textDecoration: "line-through",
+                            color: "grey.500",
+                          }
                           : {}
                       }
                     />

@@ -1,4 +1,4 @@
-import { ShipLoadout } from "../../../shared/types/ship.type";
+import { ShipLoadout } from "ed-shared";
 import { Get, Route, Tags } from "tsoa";
 import { getLoadout } from "../services/LogInterpreterService";
 

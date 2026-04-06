@@ -1,22 +1,25 @@
 {
 	"name": "ed-comet-backend",
-	"packageManager": "pnpm@10.11.1",
+	"private": true,
+	"version": "0.0.0",
 	"scripts": {
 		"dev": "nodemon",
 		"open-index": "open-cli ./coverage/lcov-report/index.html",
 		"test": "jest ./src/tests/Index.test.ts --runInBand --detectOpenHandles --coverage || pnpm run open-index",
-		"tsoa:gen": "tsx ./src/scripts/preTsoaGen.ts && tsoa spec && echo \"✅ tsoa spec generated\" && tsoa routes && echo \"✅ tsoa routes generated\" && pnpm --dir ../frontend run client:gen"
+		"tsoa:gen": "tsx ./src/scripts/preTsoaGen.ts && tsoa spec && echo ✅ tsoa spec generated && tsoa routes && echo ✅ tsoa routes generated && pnpm --dir ../frontend run client:gen"
 	},
 	"dependencies": {
 		"class-transformer": "^0.5.1",
 		"class-validator": "^0.14.2",
 		"cors": "^2.8.5",
 		"dotenv": "^17.2.1",
+		"ed-shared": "workspace:*",
 		"express": "^5.1.0",
 		"routing-controllers": "^0.11.3"
 	},
 	"devDependencies": {
 		"@types/cors": "^2.8.19",
+		"@types/express": "^5.0.6",
 		"@types/node": "^24.3.0",
 		"@types/swagger-ui-express": "^4.1.8",
 		"nodemon": "^3.1.10",
@@ -24,5 +27,6 @@
 		"tsoa": "^6.6.0",
 		"tsx": "^4.20.5",
 		"typescript": "^5.9.2"
-	}
+	},
+	"packageManager": "pnpm@10.33.0+sha512.10568bb4a6afb58c9eb3630da90cc9516417abebd3fabbe6739f0ae795728da1491e9db5a544c76ad8eb7570f5c4bb3d6c637b2cb41bfdcdb47fa823c8649319"
 }

@@ -39,15 +39,6 @@
     },
     "getStarted": "To get started, visit our GitHub page or contact us directly. We appreciate your support in making ED Comet a better tool for everyone!"
   },
-  "contribute": {
-    "title": "Contribute to ED Comet",
-    "description": "Find out how you can help improve ED Comet, report issues, suggest features, or contribute code.",
-    "translate": {
-      "title": "Help us translate ED Comet into more languages.",
-      "text": "ED Comet is available in multiple languages, but we need your help to make it even better. If you are fluent in another language and would like to help us translate the app, feel free to open a pull request on our GitHub repository.",
-      "linkText": "Join our translation team"
-    }
-  },
   "test": {
     "title": "Test Page"
   }

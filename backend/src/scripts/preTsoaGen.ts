@@ -3,8 +3,8 @@ import path from "path";
 import dotenv from "dotenv";
 
 dotenv.config();
-const apiUrl: string = process.env.API_URL;
-const apiPrefix: string = process.env.API_PREFIX;
+const apiUrl: string = process.env.API_URL || '';
+const apiPrefix: string = process.env.API_PREFIX||'';
 
 const tsoaConfig = {
 	entryFile: "src/index.ts",

@@ -228,7 +228,7 @@ $RECYCLE.BIN/
 backend/**/routes.ts
 backend/**/swagger.json
 tsoa.json
-NUL
+.log
 
 # OpenApi Generator files
 **/api/

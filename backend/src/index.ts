@@ -11,7 +11,7 @@ import swaggerDocument from "./swagger.json";
 import { getLatestLogFile } from "./services/LogInterpreterService";
 
 dotenv.config();
-const PORT: number = parseInt(process.env.PORT);
+const PORT: number = parseInt(process.env.PORT ||'0');
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -34,13 +34,13 @@ app.use(
 try {
 	const logsAvailable = getLatestLogFile();
 	if (logsAvailable != null) console.info("✅ Logs found !");
-} catch (error) {
+} catch (error: Error | any) {
 	console.log("❌ No logs available", error.message);
 }
 
 try {
 	if (swaggerDocument != null) console.info("✅ swagger file found !");
-} catch (error) {
+} catch (error: Error | any) {
 	console.log("❌ No logs available", error.message);
 }
 
