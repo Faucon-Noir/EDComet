@@ -1,19 +1,24 @@
 # TODO
 
-## To do
+## Priorisation ICE
 
-- Find a way to give the error page a localized message switching with the real error
-- Add a static log-level and overcharge `console.level` with it (checkout [winston](https://github.com/winstonjs/winston))
-- Integrate fs.watch of the ED Journal folder
-- Integrate SSE, either by sending only event to recall from client api, or by sending the data
-- Integrate persistance (maybe lowdb or duckdb)
+Scale used: Impact, Confidence, Ease from 1 to 10. ICE = Impact x Confidence x Ease.
 
-## To study
+| Status | Task | Impact | Confidence | Ease | ICE |
+| --- | --- | --- | --- | --- | --- |
+| Now | Error page localized message + switch to real error | 8 | 9 | 7 | 504 |
+| Now | Integrate `fs.watch` on ED Journal folder | 9 | 8 | 6 | 432 |
+| Next | Replace nodemon with `tsx watch` + chokidar | 7 | 8 | 7 | 392 |
+| Now | Integrate SSE (event-only vs full payload) | 9 | 7 | 5 | 315 |
+| Next | Add static log-level and override `console.level` (winston) | 6 | 8 | 6 | 288 |
+| Next | Integrate persistence (lowdb or duckdb) | 8 | 6 | 5 | 240 |
+| Later | Add social with FriendStatus (first validate ED logs support) | 6 | 4 | 5 | 120 |
+| Later | Add a music tracker (Spotify or Elite Dangerous native music) | 3 | 5 | 4 | 60 |
 
-replace nodemon by tsx watch & chokidar
-Add a music tracker (not sure if pertinent)
-pertinance of [swc](https://swc.rs/)
-Add social with FriendStatus -> For accuracy, we need to checkout if ED logs the friends statuses, and not only the connected, disconnected
+## Notes
+
+- SSE design decision to settle first: send only event IDs and re-fetch via API, or push full payload directly.
+- FriendStatus is gated by a technical feasibility check in ED logs before implementation.
 
 ### Chokidar
 
