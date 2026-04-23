@@ -5,7 +5,12 @@
     "contribute": "Contribute",
     "home": "Home",
     "ship": "Ship",
-    "test": "Test"
+    "test": "Test",
+    "sse": {
+      "connecting": "Live updates connecting",
+      "connected": "Live updates connected",
+      "disconnected": "Live updates disconnected"
+    }
   },
   "components": {
     "error": {

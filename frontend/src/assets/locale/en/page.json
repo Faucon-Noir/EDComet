@@ -17,7 +17,14 @@
   },
   "ship": {
     "title": "Your ship",
-    "description": "Here you will find information about your ships, and can select which one you want to use for transportation"
+    "description": "Here you will find information about your ships, and can select which one you want to use for transportation",
+    "emptyState": "No loadout data available yet.",
+    "summary": {
+      "name": "Ship",
+      "identifier": "Identifier",
+      "cargoCapacity": "Cargo capacity",
+      "jumpRange": "Max jump range"
+    }
   },
   "construction": {
     "title": "Your construction projects",

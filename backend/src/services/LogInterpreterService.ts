@@ -1,13 +1,14 @@
 import * as fs from "fs";
 import * as path from "path";
+import { EventEmitter } from "events";
 import dotenv from "dotenv";
 import { getLogsPath } from "../utils/utils";
 import { LogFileWatcher } from "../utils/watcher";
 import { EventEnum, ShipLoadout, ColonisationConstructionDepot, FileHeader, getErrorMessage } from "ed-shared";
 
 dotenv.config();
-const logFile: string = getLatestLogFile();
-const content: string = fs.readFileSync(logFile, "utf8");
+const logFile: string | null = safeGetLatestLogFile();
+const content: string = logFile ? fs.readFileSync(logFile, "utf8") : "";
 const lines: string[] = content
 	.split("\n")
 	.filter((line): boolean => line.trim().length > 0);
@@ -16,8 +17,21 @@ let latestLoadout: ShipLoadout | null = null;
 let latestDepot: ColonisationConstructionDepot | null = null;
 let latestFileHeader: FileHeader | null = null;
 
-const watcher = new LogFileWatcher();
-watcher.on("line", (line: string) => {
+export type JournalEventType =
+	| EventEnum.Loadout
+	| EventEnum.ColonisationConstructionDepot
+	| EventEnum.FileHeader;
+
+export interface JournalUpdate {
+	event: JournalEventType;
+	timestamp: string;
+}
+
+const journalUpdateEmitter = new EventEmitter();
+const JOURNAL_UPDATE_EVENT = "journal-update";
+
+const watcher = logFile ? new LogFileWatcher() : null;
+watcher?.on("line", (line: string) => {
 	try {
 		const event = JSON.parse(line);
 		if (event.event === EventEnum.Loadout) {
@@ -29,10 +43,51 @@ watcher.on("line", (line: string) => {
 		if (event.event === EventEnum.FileHeader) {
 			latestFileHeader = event as FileHeader;
 		}
+		emitJournalUpdate(event);
 	} catch (err: any) {
 		console.log("🚧 Watch error", err.message);
 	}
 });
+
+function safeGetLatestLogFile(): string | null {
+	try {
+		return getLatestLogFile();
+	} catch (error: unknown) {
+		console.warn("🚧 Journal watcher disabled:", getErrorMessage(error));
+		return null;
+	}
+}
+
+function isSupportedJournalEvent(eventName: unknown): eventName is JournalEventType {
+	return (
+		eventName === EventEnum.Loadout ||
+		eventName === EventEnum.ColonisationConstructionDepot ||
+		eventName === EventEnum.FileHeader
+	);
+}
+
+function emitJournalUpdate(event: { event?: unknown; timestamp?: unknown }): void {
+	if (!isSupportedJournalEvent(event.event)) {
+		return;
+	}
+
+	journalUpdateEmitter.emit(JOURNAL_UPDATE_EVENT, {
+		event: event.event,
+		timestamp:
+			typeof event.timestamp === "string"
+				? event.timestamp
+				: new Date().toISOString(),
+	} satisfies JournalUpdate);
+}
+
+export function onJournalUpdate(
+	listener: (update: JournalUpdate) => void
+): () => void {
+	journalUpdateEmitter.on(JOURNAL_UPDATE_EVENT, listener);
+	return () => {
+		journalUpdateEmitter.off(JOURNAL_UPDATE_EVENT, listener);
+	};
+}
 
 /**
  * A function to get the LatestLogFile path
@@ -42,7 +97,7 @@ watcher.on("line", (line: string) => {
 export function getLatestLogFile(): string {
 	const logPaths = getLogsPath();
 	if (!logPaths) {
-		throw new Error("Logs path is unavailable.");
+		throw new Error("❌ Logs path is unavailable.");
 	}
 	const files = fs
 		.readdirSync(logPaths)
