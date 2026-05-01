@@ -22,18 +22,18 @@ export class HelloController {
 	}
 	@Post("/")
 	public async postHello() {
-		console.log("sting");
+		console.log("post");
 	}
 	@Put("/")
 	public async putHello() {
-		console.log("sting");
+		console.log("put");
 	}
 	@Patch("/")
 	public async patchHello() {
-		console.log("sting");
+		console.log("patch");
 	}
 	@Delete("/")
 	public async delHello() {
-		console.log("sting");
+		console.log("delete");
 	}
 }

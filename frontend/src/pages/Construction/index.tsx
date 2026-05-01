@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Configuration } from '../../api/configuration';
-import { ColonisationConstructionDepot, ColonisationConstructionDepotResource, ColonisationStats, ConstructionApi, HelloApi } from '../../api';
+import { ColonisationConstructionDepot, ColonisationConstructionDepotResource, ColonisationStats } from '../../api';
 import LinearProgressWithLabel from '@mui/material/LinearProgress';
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
@@ -10,12 +9,10 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import Checkbox from '@mui/material/Checkbox';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
+import { constructionApi, helloApi } from '../../utils';
 
 const ConstructionPage: React.FC = () => {
   const { t } = useTranslation("page", { keyPrefix: "construction" });
-  const configuration = new Configuration();
-  const apiInstance = new ConstructionApi(configuration);
-  const helloApi = new HelloApi(configuration);
 
   const [checked, setChecked] = useState<string[]>([]);
   const [lang, setLang] = useState<string>("");
@@ -37,10 +34,10 @@ const ConstructionPage: React.FC = () => {
       setLang(res.data);
       console.log("Language set to", res.data);
     });
-    apiInstance.getLatestSite().then((res) => {
+    constructionApi.getLatestSite().then((res) => {
       setData(res.data);
     });
-    apiInstance.getLatestSiteStats().then((res) => {
+    constructionApi.getLatestSiteStats().then((res) => {
       setStats(res.data);
     });
   }, []);

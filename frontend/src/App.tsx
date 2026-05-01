@@ -2,16 +2,14 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import "./App.css";
 import Pages from "./pages/Pages";
-import { HelloApi, Configuration } from "./api/index";
 import i18next from "./assets/locale/i18n";
+import { helloApi } from "./utils";
 
 function App() {
   const { t } = useTranslation("common");
-  const configuration = new Configuration();
-  const apiInstance = new HelloApi(configuration);
 
   useEffect(() => {
-    apiInstance
+    helloApi
       .getHello()
       .then((res) => {
         i18next.changeLanguage(res.data.lang);

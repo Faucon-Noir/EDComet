@@ -18,7 +18,7 @@ Le `package.json` racine contient aussi la configuration pnpm necessaire pour au
 
 ### 2. Migration des manifests backend et frontend
 
-Les champs `packageManager` ont ete remplaces pour pointer vers `pnpm@10.11.1` dans :
+Les champs `packageManager` ont ete remplaces pour pointer vers `pnpm@10.33.0` dans :
 
 - `backend/package.json`
 - `frontend/package.json`
@@ -73,7 +73,7 @@ Sur les environnements qui n'ont pas pnpm installe globalement, il est recommand
 
 ```bash
 corepack enable
-corepack prepare pnpm@10.11.1 --activate
+corepack prepare pnpm@10.33.0 --activate
 ```
 
 Avec Node.js recent, Corepack est en general deja disponible.
@@ -119,7 +119,7 @@ Si pnpm n'est pas disponible :
 
 ```bash
 corepack enable
-corepack prepare pnpm@10.11.1 --activate
+corepack prepare pnpm@10.33.0 --activate
 pnpm install
 ```
 
@@ -131,7 +131,7 @@ Depuis la racine du depot :
 
 ```bash
 corepack enable
-corepack prepare pnpm@10.11.1 --activate
+corepack prepare pnpm@10.33.0 --activate
 pnpm install
 pnpm run tsoa:gen
 ```
