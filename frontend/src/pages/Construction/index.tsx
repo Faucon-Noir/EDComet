@@ -10,11 +10,9 @@ import Checkbox from '@mui/material/Checkbox';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
 import { constructionApi, helloApi } from '../../utils';
-import { useJournalStream } from '../../features/journalStream';
 
 const ConstructionPage: React.FC = () => {
   const { t } = useTranslation("page", { keyPrefix: "construction" });
-  const { lastEvent } = useJournalStream();
 
   const [checked, setChecked] = useState<string[]>([]);
   const [lang, setLang] = useState<string>("");
@@ -44,21 +42,24 @@ const ConstructionPage: React.FC = () => {
     });
   }, []);
 
-  useEffect(() => {
-    if (lastEvent?.event !== "ColonisationConstructionDepot") {
-      return;
-    }
+  // useEffect(() => {
+  //   if (lastEvent?.event !== "ColonisationConstructionDepot") {
+  //     return;
+  //   }
 
-    apiInstance.getLatestSite().then((res) => {
-      setData(res.data);
-    });
-    apiInstance.getLatestSiteStats().then((res) => {
-      setStats(res.data);
-    });
-  }, [apiInstance, lastEvent]);
+  //   constructionApi.getLatestSite().then((res) => {
+  //     setData(res.data);
+  //   });
+  //   constructionApi.getLatestSiteStats().then((res) => {
+  //     setStats(res.data);
+  //   });
+  // }, [lastEvent]);
 
   const formatStat = (value: number | undefined): string => {
-    return typeof value === "number" ? value.toLocaleString(lang) : "N/A";
+    return typeof value === "number" 
+    // ? value.toLocaleString(lang)
+      ? value.toString()
+    : "N/A";
   };
 
   const estimatedPayment = formatStat(stats?.estimatedPayment);
