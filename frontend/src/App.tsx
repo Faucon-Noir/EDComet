@@ -1,5 +1,7 @@
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { Configuration, HelloApi } from "./api";
+import { EventEnum } from "ed-shared";
 import "./App.css";
 import Pages from "./pages/Pages";
 import i18next from "./assets/locale/i18n";
@@ -23,10 +25,10 @@ function AppContent() {
         console.error("API error:", err);
       });
     document.title = t("title");
-  }, [t]);
+  }, []);
 
   useEffect(() => {
-    if (lastEvent?.event !== "Fileheader") {
+    if (!lastEvent?.events.some(e => e === EventEnum.FileHeader)) {
       return;
     }
 

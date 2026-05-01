@@ -6,11 +6,7 @@ import {
 	useState,
 	type PropsWithChildren,
 } from "react";
-
-export type JournalEventType =
-	| "Loadout"
-	| "ColonisationConstructionDepot"
-	| "Fileheader";
+import { EventEnum } from "ed-shared";
 
 export type JournalStreamStatus =
 	| "connecting"
@@ -19,7 +15,7 @@ export type JournalStreamStatus =
 
 export interface JournalStreamEvent {
 	id: string;
-	event: JournalEventType;
+	events: EventEnum[];
 	timestamp: string;
 }
 
@@ -31,10 +27,10 @@ interface JournalStreamContextValue {
 const JournalStreamContext =
 	createContext<JournalStreamContextValue | null>(null);
 
-const supportedEventTypes: JournalEventType[] = [
-	"Loadout",
-	"ColonisationConstructionDepot",
-	"Fileheader",
+const supportedEventTypes: EventEnum[] = [
+	EventEnum.Loadout,
+	EventEnum.ColonisationConstructionDepot,
+	EventEnum.FileHeader,
 ];
 
 function buildJournalStreamUrl(): string {
@@ -71,24 +67,27 @@ export function JournalStreamProvider({
 		const handleMessage = (message: MessageEvent<string>) => {
 			try {
 				const payload = JSON.parse(message.data) as Partial<JournalStreamEvent>;
+				// console.debug("📡 Received SSE message", payload);
 				const eventId = payload.id ?? message.lastEventId;
 
 				if (!eventId || lastEventIdRef.current === eventId) {
 					return;
 				}
 
-				if (
-					payload.event !== "Loadout" &&
-					payload.event !== "ColonisationConstructionDepot" &&
-					payload.event !== "Fileheader"
-				) {
+				// Filter for supported event types
+				const validEvents = (payload.events ?? []).filter(
+					(event): event is EventEnum =>
+						supportedEventTypes.includes(event as EventEnum)
+				);
+
+				if (validEvents.length === 0) {
 					return;
 				}
 
 				lastEventIdRef.current = eventId;
 				setLastEvent({
 					id: eventId,
-					event: payload.event,
+					events: validEvents,
 					timestamp:
 						typeof payload.timestamp === "string"
 							? payload.timestamp
@@ -100,17 +99,13 @@ export function JournalStreamProvider({
 			}
 		};
 
-		for (const eventType of supportedEventTypes) {
-			eventSource.addEventListener(eventType, handleMessage as EventListener);
-		}
+		eventSource.addEventListener("journal-update", handleMessage as EventListener);
 
 		return () => {
-			for (const eventType of supportedEventTypes) {
-				eventSource.removeEventListener(
-					eventType,
-					handleMessage as EventListener
-				);
-			}
+			eventSource.removeEventListener(
+				"journal-update",
+				handleMessage as EventListener
+			);
 			eventSource.close();
 		};
 	}, []);

@@ -18,7 +18,7 @@ const ShipPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (lastEvent?.event !== 'Loadout') {
+    if (!lastEvent?.events.some(e => e === 'Loadout')) {
       return;
     }
 

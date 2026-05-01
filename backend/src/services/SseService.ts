@@ -1,11 +1,13 @@
 import type { Response } from "express";
+import { EventEnum } from "ed-shared";
 import {
 	onJournalUpdate,
-	type JournalUpdate,
 } from "./LogInterpreterService";
 
-export interface JournalSseMessage extends JournalUpdate {
+export interface JournalSseMessage {
 	id: string;
+	events: EventEnum[];
+	timestamp: string;
 }
 
 class JournalSseService {
@@ -13,8 +15,8 @@ class JournalSseService {
 	private nextEventId = 1;
 
 	constructor() {
-		onJournalUpdate((update) => {
-			this.broadcast(update);
+		onJournalUpdate((events) => {
+			this.broadcast(events);
 		});
 	}
 
@@ -42,15 +44,35 @@ class JournalSseService {
 		};
 	}
 
-	private broadcast(update: JournalUpdate): void {
+	private isValidEventEnum(eventType: unknown): eventType is EventEnum {
+		return Object.values(EventEnum).includes(eventType as EventEnum);
+	}
+
+	private broadcast(events: EventEnum[]): void {
+		// Filter and validate events against EventEnum
+		const validEvents = events.filter((eventType) => {
+			if (!this.isValidEventEnum(eventType)) {
+				console.warn(`⚠️ Invalid event type received: ${eventType}`);
+				return false;
+			}
+			console.log(`📤 Broadcasting event: ${eventType}`);
+			return true;
+		});
+
+		// Only broadcast if there are valid events
+		if (validEvents.length === 0) {
+			return;
+		}
+
 		const message: JournalSseMessage = {
 			id: String(this.nextEventId++),
-			...update,
+			events: validEvents,
+			timestamp: new Date().toISOString(),
 		};
 
 		const chunk = [
 			`id: ${message.id}`,
-			`event: ${message.event}`,
+			`event: journal-update`,
 			`data: ${JSON.stringify(message)}`,
 			"",
 		].join("\n");

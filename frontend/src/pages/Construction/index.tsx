@@ -3,20 +3,27 @@ import { useTranslation } from 'react-i18next';
 import { ColonisationConstructionDepot, ColonisationConstructionDepotResource, ColonisationStats } from '../../api';
 import LinearProgressWithLabel from '@mui/material/LinearProgress';
 import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardHeader from '@mui/material/CardHeader';
+import CardContent from '@mui/material/CardContent';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Checkbox from '@mui/material/Checkbox';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
-import { constructionApi, helloApi } from '../../utils';
+import Typography from '@mui/material/Typography';
+import Chip from '@mui/material/Chip';
+import { constructionApi } from '../../utils';
+import { useJournalStream, type JournalStreamEvent } from '../../features/journalStream';
 
 const ConstructionPage: React.FC = () => {
   const { t } = useTranslation("page", { keyPrefix: "construction" });
+  const { lastEvent } = useJournalStream();
 
   const [checked, setChecked] = useState<string[]>([]);
-  const [lang, setLang] = useState<string>("");
   const [stats, setStats] = useState<ColonisationStats>();
+  const [eventHistory, setEventHistory] = useState<JournalStreamEvent[]>([]);
   const [data, setData] = useState<ColonisationConstructionDepot>({
     timestamp: "",
     event: "ColonisationConstructionDepot",
@@ -30,10 +37,6 @@ const ConstructionPage: React.FC = () => {
   const progress: number = Number((data.ConstructionProgress * 100).toFixed(1));
 
   useEffect(() => {
-    helloApi.getLanguage().then((res) => {
-      setLang(res.data);
-      console.log("Language set to", res.data);
-    });
     constructionApi.getLatestSite().then((res) => {
       setData(res.data);
     });
@@ -42,22 +45,27 @@ const ConstructionPage: React.FC = () => {
     });
   }, []);
 
-  // useEffect(() => {
-  //   if (lastEvent?.event !== "ColonisationConstructionDepot") {
-  //     return;
-  //   }
+  useEffect(() => {
+    if (!lastEvent?.events.some(e => e === "ColonisationConstructionDepot")) {
+      return;
+    }
 
-  //   constructionApi.getLatestSite().then((res) => {
-  //     setData(res.data);
-  //   });
-  //   constructionApi.getLatestSiteStats().then((res) => {
-  //     setStats(res.data);
-  //   });
-  // }, [lastEvent]);
+    constructionApi.getLatestSite().then((res) => {
+      setData(res.data);
+    });
+    constructionApi.getLatestSiteStats().then((res) => {
+      setStats(res.data);
+    });
+  }, [lastEvent]);
+
+  useEffect(() => {
+    if (lastEvent) {
+      setEventHistory(prev => [lastEvent, ...prev].slice(0, 5));
+    }
+  }, [lastEvent]);
 
   const formatStat = (value: number | undefined): string => {
     return typeof value === "number" 
-    // ? value.toLocaleString(lang)
       ? value.toString()
     : "N/A";
   };
@@ -106,6 +114,47 @@ const ConstructionPage: React.FC = () => {
             {index < statsList.length - 1 && " | "}
           </span>
         ))}
+      </Box>
+      <Box sx={{ marginTop: "20px" }}>
+        <Box
+          title="Derniers événements du stream"
+          sx={{ paddingBottom: "8px" }}
+        />
+        <Box sx={{ paddingTop: "0px" }}>
+          {eventHistory.length === 0 ? (
+            <Typography >
+              En attente d'événements...
+            </Typography>
+          ) : (
+            <List sx={{ padding: "0px" }}>
+              {eventHistory.map((event, index) => (
+                <ListItem key={event.id} sx={{ paddingY: "8px", borderBottom: index < eventHistory.length - 1 ? "1px solid" : "none" }}>
+                  <Box sx={{ width: "100%" }}>
+                    <Box sx={{ display: "flex", gap: "8px", alignItems: "center", marginBottom: "4px" }}>
+                      <Typography variant="caption" >
+                        #{event.id}
+                      </Typography>
+                      <Typography variant="caption" >
+                        {new Date(event.timestamp).toLocaleTimeString()}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: "flex", gap: "4px", flexWrap: "wrap" }}>
+                      {event.events.map((eventType) => (
+                        <Chip
+                          key={eventType}
+                          label={eventType}
+                          size="small"
+                          variant="outlined"
+                          sx={{ height: "24px" }}
+                        />
+                      ))}
+                    </Box>
+                  </Box>
+                </ListItem>
+              ))}
+            </List>
+          )}
+        </Box>
       </Box>
       <Box>
         <List>
