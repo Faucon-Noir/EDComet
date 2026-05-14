@@ -1,16 +1,8 @@
 import * as fs from "fs";
 import * as path from "path";
-import dotenv from "dotenv";
 import { getLogsPath } from "../utils/utils";
-import { LogFileWatcher } from "../utils/watcher";
+import { LogFileWatcher, type WatchedFileChange } from "../utils/watcher";
 import { EventEnum, ShipLoadout, ColonisationConstructionDepot, FileHeader, getErrorMessage } from "ed-shared";
-
-dotenv.config();
-const logFile: string = getLatestLogFile();
-const content: string = fs.readFileSync(logFile, "utf8");
-const lines: string[] = content
-	.split("\n")
-	.filter((line): boolean => line.trim().length > 0);
 
 let latestLoadout: ShipLoadout | null = null;
 let latestDepot: ColonisationConstructionDepot | null = null;
@@ -19,9 +11,18 @@ let latestFileHeader: FileHeader | null = null;
 // SSE batching: accumulate changes over 1 second
 export type EventChangeMap = Record<EventEnum, string>;
 
+export interface JournalFileChangeEvent {
+	fileName: string;
+	filePath: string;
+	change: "created" | "updated";
+	type: "journal-switched" | "support-file";
+}
+
 const pendingEvents = new Set<EventEnum>();
 const pendingChanges = new Map<EventEnum, string>();
 let updateCallbacks: ((events: EventEnum[], changes: EventChangeMap) => void)[] = [];
+const pendingFileChanges = new Map<string, JournalFileChangeEvent>();
+let fileChangeCallbacks: ((changes: JournalFileChangeEvent[]) => void)[] = [];
 let batchInterval: NodeJS.Timeout | null = null;
 
 function startBatchInterval(): void {
@@ -38,7 +39,63 @@ function startBatchInterval(): void {
 			pendingChanges.clear();
 			updateCallbacks.forEach(callback => callback(events, changes));
 		}
-	}, 1000);
+
+		if (pendingFileChanges.size > 0) {
+			const changes = Array.from(pendingFileChanges.values());
+			pendingFileChanges.clear();
+			fileChangeCallbacks.forEach((callback) => callback(changes));
+		}
+	}, 500);
+}
+
+function readJournalLines(logFile: string): string[] {
+	const content = fs.readFileSync(logFile, "utf8");
+	return content
+		.split("\n")
+		.filter((line): boolean => line.trim().length > 0);
+}
+
+function cacheRelevantEvent(event: unknown): void {
+	if (typeof event !== "object" || event == null || !("event" in event)) {
+		return;
+	}
+
+	if (event.event === EventEnum.Loadout) {
+		latestLoadout = event as ShipLoadout;
+		recordEventChange(EventEnum.Loadout);
+	}
+	if (event.event === EventEnum.ColonisationConstructionDepot) {
+		latestDepot = event as ColonisationConstructionDepot;
+		recordEventChange(EventEnum.ColonisationConstructionDepot);
+	}
+	if (event.event === EventEnum.FileHeader) {
+		latestFileHeader = event as FileHeader;
+		recordEventChange(EventEnum.FileHeader);
+	}
+}
+
+function refreshStateFromJournal(logFile: string): void {
+	latestLoadout = null;
+	latestDepot = null;
+	latestFileHeader = null;
+
+	for (const line of readJournalLines(logFile)) {
+		try {
+			cacheRelevantEvent(JSON.parse(line));
+		} catch (err: unknown) {
+			console.warn("🚧 Journal refresh parse error", getErrorMessage(err));
+		}
+	}
+}
+
+function recordFileChange(change: WatchedFileChange): void {
+	pendingFileChanges.set(`${change.type}:${change.fileName}`, {
+		fileName: change.fileName,
+		filePath: change.filePath,
+		change: change.change,
+		type: change.type,
+	});
+	startBatchInterval();
 }
 
 function generateLoadoutSummary(loadout: ShipLoadout): string {
@@ -74,22 +131,17 @@ function recordEventChange(eventType: EventEnum): void {
 const watcher = new LogFileWatcher();
 watcher.on("line", (line: string) => {
 	try {
-		const event = JSON.parse(line);
-		if (event.event === EventEnum.Loadout) {
-			latestLoadout = event as ShipLoadout;
-			recordEventChange(EventEnum.Loadout);
-		}
-		if (event.event === EventEnum.ColonisationConstructionDepot) {
-			latestDepot = event as ColonisationConstructionDepot;
-			recordEventChange(EventEnum.ColonisationConstructionDepot);
-		}
-		if (event.event === EventEnum.FileHeader) {
-			latestFileHeader = event as FileHeader;
-			recordEventChange(EventEnum.FileHeader);
-		}
+		cacheRelevantEvent(JSON.parse(line));
 	} catch (err: any) {
 		console.log("🚧 Watch error", err.message);
 	}
+});
+watcher.on("file-change", (change: WatchedFileChange) => {
+	if (change.type === "journal-switched") {
+		refreshStateFromJournal(change.filePath);
+	}
+
+	recordFileChange(change);
 });
 
 /**
@@ -119,17 +171,25 @@ export function  getLatestLogFile(): string {
 	
 }
 
+function getCurrentJournalLines(): string[] {
+	const currentLogFile = getLatestLogFile();
+	if (!currentLogFile) {
+		return [];
+	}
+
+	return readJournalLines(currentLogFile);
+}
+
 /**
  * A function to get the ShipLoadout
  * @returns A ShipLoadout object or null
  */
 export function getLoadout(): ShipLoadout | null {
-	if (!logFile) return null;
 	if (latestLoadout != null) {
 		return latestLoadout;
 	}
 	let lastLoadout: ShipLoadout | null = null;
-	for (const line of lines) {
+	for (const line of getCurrentJournalLines()) {
 		try {
 			const event = JSON.parse(line);
 			if (event.event === EventEnum.Loadout) {
@@ -155,13 +215,12 @@ export function getLoadout(): ShipLoadout | null {
  * @returns An object, either of type ColonisationConstructionDepot or null
  */
 export function getLatestConstructionDepot(): ColonisationConstructionDepot | null {
-	if (!logFile) return null;
 	if (latestDepot != null) {
 		return latestDepot;
 	}
 	let lastDepot: ColonisationConstructionDepot | null = null;
 	try {
-		for (const line of lines) {
+		for (const line of getCurrentJournalLines()) {
 			try {
 				const event = JSON.parse(line);
 				if (event.event === EventEnum.ColonisationConstructionDepot) {
@@ -194,13 +253,12 @@ export function getLatestConstructionDepot(): ColonisationConstructionDepot | nu
  * @returns An object, either of type FileHeader or null
  */
 export function getFileHeader(): FileHeader | null {
-	if (!logFile) return null;
 	if (latestFileHeader != null) {
 		return latestFileHeader;
 	}
 	let lastFileHeader: FileHeader | null = null;
 	try {
-		for (const line of lines) {
+		for (const line of getCurrentJournalLines()) {
 			try {
 				const event = JSON.parse(line);
 				if (event.event === EventEnum.FileHeader) {
@@ -234,4 +292,8 @@ export function getFileHeader(): FileHeader | null {
  */
 export function onJournalUpdate(callback: (events: EventEnum[], changes: EventChangeMap) => void): void {
 	updateCallbacks.push(callback);
+}
+
+export function onJournalFileChange(callback: (changes: JournalFileChangeEvent[]) => void): void {
+	fileChangeCallbacks.push(callback);
 }

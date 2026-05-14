@@ -3,9 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { ColonisationConstructionDepot, ColonisationConstructionDepotResource, ColonisationStats } from '../../api';
 import LinearProgressWithLabel from '@mui/material/LinearProgress';
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import CardContent from '@mui/material/CardContent';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -14,8 +11,9 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
 import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip';
-import { constructionApi } from '../../utils';
-import { useJournalStream, type JournalStreamEvent } from '../../features/journalStream';
+import { constructionApi } from '../../utils/api';
+import { useJournalStream } from '../../utils/stream';
+import { JournalStreamEvent } from '../../utils/stream/type';
 
 const ConstructionPage: React.FC = () => {
   const { t } = useTranslation("page", { keyPrefix: "construction" });
@@ -46,7 +44,10 @@ const ConstructionPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!lastEvent?.events.some(e => e === "ColonisationConstructionDepot")) {
+    const hasDepotEvent = lastEvent?.events.some(e => e === "ColonisationConstructionDepot");
+    const hasJournalSwitch = lastEvent?.files?.some(file => file.type === "journal-switched");
+
+    if (!hasDepotEvent && !hasJournalSwitch) {
       return;
     }
 
@@ -123,7 +124,7 @@ const ConstructionPage: React.FC = () => {
         <Box sx={{ paddingTop: "0px" }}>
           {eventHistory.length === 0 ? (
             <Typography >
-              En attente d'événements...
+              {t("stream.awaiting_events")}
             </Typography>
           ) : (
             <List sx={{ padding: "0px" }}>

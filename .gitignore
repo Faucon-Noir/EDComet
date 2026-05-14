@@ -234,8 +234,8 @@ tsoa.json
 **/api/
 openapitools.json
 
-# Yarn
-*/.yarn/*
+# Schemas
+**/schemas/
 
 # SBOM Related
 **/sbom/

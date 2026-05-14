@@ -1,15 +1,14 @@
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Configuration, HelloApi } from "./api";
 import { EventEnum } from "ed-shared";
 import "./App.css";
 import Pages from "./pages/Pages";
 import i18next from "./assets/locale/i18n";
-import { helloApi } from "./utils";
+import { helloApi } from "./utils/api";
 import {
   JournalStreamProvider,
   useJournalStream,
-} from "./features/journalStream";
+} from "./utils/stream";
 
 function AppContent() {
   const { t } = useTranslation("common");
@@ -28,14 +27,14 @@ function AppContent() {
   }, []);
 
   useEffect(() => {
-    if (!lastEvent?.events.some(e => e === EventEnum.FileHeader)) {
+    const hasFileHeaderEvent = lastEvent?.events.some(e => e === EventEnum.FileHeader);
+    const hasJournalSwitch = lastEvent?.files?.some(file => file.type === 'journal-switched');
+
+    if (!hasFileHeaderEvent && !hasJournalSwitch) {
       return;
     }
 
-    const configuration = new Configuration();
-    const apiInstance = new HelloApi(configuration);
-
-    apiInstance
+    helloApi
       .getLanguage()
       .then((res) => {
         i18next.changeLanguage(res.data);

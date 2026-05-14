@@ -7,22 +7,7 @@ import {
 	type PropsWithChildren,
 } from "react";
 import { EventEnum } from "ed-shared";
-
-export type JournalStreamStatus =
-	| "connecting"
-	| "connected"
-	| "disconnected";
-
-export interface JournalStreamEvent {
-	id: string;
-	events: EventEnum[];
-	timestamp: string;
-}
-
-interface JournalStreamContextValue {
-	status: JournalStreamStatus;
-	lastEvent: JournalStreamEvent | null;
-}
+import { JournalStreamContextValue, JournalStreamEvent, JournalStreamStatus } from "./type";
 
 const JournalStreamContext =
 	createContext<JournalStreamContextValue | null>(null);
@@ -88,6 +73,7 @@ export function JournalStreamProvider({
 				setLastEvent({
 					id: eventId,
 					events: validEvents,
+					files: Array.isArray(payload.files) ? payload.files : [],
 					timestamp:
 						typeof payload.timestamp === "string"
 							? payload.timestamp

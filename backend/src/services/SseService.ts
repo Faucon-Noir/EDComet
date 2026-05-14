@@ -1,12 +1,15 @@
 import type { Response } from "express";
 import { EventEnum } from "ed-shared";
 import {
+	onJournalFileChange,
 	onJournalUpdate,
+	type JournalFileChangeEvent,
 } from "./LogInterpreterService";
 
 export interface JournalSseMessage {
 	id: string;
 	events: EventEnum[];
+	files?: JournalFileChangeEvent[];
 	timestamp: string;
 }
 
@@ -17,6 +20,10 @@ class JournalSseService {
 	constructor() {
 		onJournalUpdate((events) => {
 			this.broadcast(events);
+		});
+
+		onJournalFileChange((files) => {
+			this.broadcast([], files);
 		});
 	}
 
@@ -48,7 +55,7 @@ class JournalSseService {
 		return Object.values(EventEnum).includes(eventType as EventEnum);
 	}
 
-	private broadcast(events: EventEnum[]): void {
+	private broadcast(events: EventEnum[], files: JournalFileChangeEvent[] = []): void {
 		// Filter and validate events against EventEnum
 		const validEvents = events.filter((eventType) => {
 			if (!this.isValidEventEnum(eventType)) {
@@ -60,13 +67,14 @@ class JournalSseService {
 		});
 
 		// Only broadcast if there are valid events
-		if (validEvents.length === 0) {
+		if (validEvents.length === 0 && files.length === 0) {
 			return;
 		}
 
 		const message: JournalSseMessage = {
 			id: String(this.nextEventId++),
 			events: validEvents,
+			files,
 			timestamp: new Date().toISOString(),
 		};
 

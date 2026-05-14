@@ -1,0 +1,47 @@
+{
+  "admin": {
+    "dashboard": {
+      "title": "Tableau de bord",
+      "markets": "Marchés",
+      "ship": "Vaisseau",
+      "systems": "Systèmes"
+    },
+    "warning": "Veuillez noter que vous êtes dans une zone sécurisée. Toute action non autorisée sera enregistrée."
+  },
+  "home": {
+    "title": "ED Comet",
+    "description": "Bienvenue sur ED Comet, l'outil de Marché de Construction et d'Exploration",
+    "construction": "Site de Construction",
+    "ship": "Vaisseau",
+    "systems": "Systèmes"
+  },
+  "ship": {
+    "title": "Votre vaisseau",
+    "description": "Ici, vous trouverez des informations sur vos vaisseaux et pourrez sélectionner celui que vous souhaitez utiliser pour le transport",
+    "emptyState": "Aucune donnée de configuration disponible pour le moment.",
+    "summary": {
+      "name": "vaisseau",
+      "identifier": "Identifiant",
+      "cargoCapacity": "Capacité de fret",
+      "jumpRange": "Portée de saut maximale"
+    }
+  },
+  "construction": {
+    "title": "Vos projets de construction",
+    "description": "Ici, vous trouverez des informations sur vos projets de construction, tels que leur statut, leur progression, les ressources requises, et plus encore.",
+    "stats": {
+      "estimatedPayment": "Paiement estimé",
+      "resourcesRequired": "Ressources requises",
+      "travelsRequired": "Trajets requis",
+      "remainingTravels": "Trajets restants"
+    },
+    "stream":{
+      "connected": "Mises à jour en direct connectées",
+      "disconnected": "Mises à jour en direct déconnectées",
+      "awaiting_events": "En attente d'événements..."
+    }
+  },
+  "test": {
+    "title": "Page de Test"
+  }
+}

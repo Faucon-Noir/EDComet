@@ -3,7 +3,7 @@ import { HeaderStyle, NavStyle } from "./style";
 import { navItem } from "../constant";
 import { Box, Link } from "@mui/material";
 import { Home } from "../../pages/paths";
-import { useJournalStream } from "../../features/journalStream";
+import { useJournalStream } from "../../utils/stream";
 
 export const Header: React.FC = () => {
 	const { t } = useTranslation("common", { keyPrefix: "header" });
