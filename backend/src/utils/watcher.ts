@@ -48,6 +48,7 @@ export class LogFileWatcher extends EventEmitter {
 
 		if (this.logFile !== latestLogFile) {
 			this.logFile = latestLogFile;
+			console.info("📁 Journal switched:", path.basename(latestLogFile));
 			this.lastJournalSize = 0;
 			this.emit("file-change", {
 				type: "journal-switched",
@@ -55,11 +56,26 @@ export class LogFileWatcher extends EventEmitter {
 				filePath: latestLogFile,
 				change: "created",
 			} satisfies WatchedFileChange);
-			this.readNewLines(0, fs.statSync(latestLogFile).size);
+			try {
+				const nextSize = fs.statSync(latestLogFile).size;
+				this.readNewLines(0, nextSize);
+				this.lastJournalSize = nextSize;
+			} catch (error: unknown) {
+				const message = error instanceof Error ? error.message : String(error);
+				console.warn("🚧 Unable to read switched journal:", message);
+			}
 			return;
 		}
 
-		const stats = fs.statSync(latestLogFile);
+		let stats: fs.Stats;
+		try {
+			stats = fs.statSync(latestLogFile);
+		} catch (error: unknown) {
+			const message = error instanceof Error ? error.message : String(error);
+			console.warn("🚧 Unable to stat journal:", message);
+			return;
+		}
+
 		const previousSize = this.lastJournalSize;
 
 		if (stats.size > previousSize) {
@@ -117,12 +133,19 @@ export class LogFileWatcher extends EventEmitter {
 	}
 
 	private readNewLines(start: number, end: number): void {
+		if (!this.logFile || end <= start || end <= 0) {
+			return;
+		}
+
 		const stream = fs.createReadStream(this.logFile!, {
 			start,
 			end: end - 1,
 			encoding: "utf8",
 		});
 		let buffer = "";
+		stream.on("error", (error: Error): void => {
+			console.warn("🚧 Journal stream read error:", error.message);
+		});
 		stream.on("data", (chunk): void => {
 			buffer += chunk;
 		});

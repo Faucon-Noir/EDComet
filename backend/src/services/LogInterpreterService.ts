@@ -2,11 +2,12 @@ import * as fs from "fs";
 import * as path from "path";
 import { getLogsPath } from "../utils/utils";
 import { LogFileWatcher, type WatchedFileChange } from "../utils/watcher";
-import { EventEnum, ShipLoadout, ColonisationConstructionDepot, FileHeader, getErrorMessage } from "ed-shared";
+import { EventEnum, ShipLoadout, ColonisationConstructionDepot, FileHeader, getErrorMessage, CommanderType } from "ed-shared";
 
 let latestLoadout: ShipLoadout | null = null;
 let latestDepot: ColonisationConstructionDepot | null = null;
 let latestFileHeader: FileHeader | null = null;
+let latestCommander: CommanderType | null = null;
 
 // SSE batching: accumulate changes over 1 second
 export type EventChangeMap = Record<EventEnum, string>;
@@ -25,9 +26,10 @@ const pendingFileChanges = new Map<string, JournalFileChangeEvent>();
 let fileChangeCallbacks: ((changes: JournalFileChangeEvent[]) => void)[] = [];
 let batchInterval: NodeJS.Timeout | null = null;
 
+// #region Log Watching and Interpretation
 function startBatchInterval(): void {
 	if (batchInterval) return;
-	
+
 	batchInterval = setInterval(() => {
 		if (pendingEvents.size > 0) {
 			const events = Array.from(pendingEvents);
@@ -114,7 +116,7 @@ function generateFileHeaderSummary(fileHeader: FileHeader): string {
 
 function recordEventChange(eventType: EventEnum): void {
 	let summary = "Unknown change";
-	
+
 	if (eventType === EventEnum.Loadout && latestLoadout) {
 		summary = generateLoadoutSummary(latestLoadout);
 	} else if (eventType === EventEnum.ColonisationConstructionDepot && latestDepot) {
@@ -122,10 +124,19 @@ function recordEventChange(eventType: EventEnum): void {
 	} else if (eventType === EventEnum.FileHeader && latestFileHeader) {
 		summary = generateFileHeaderSummary(latestFileHeader);
 	}
-	
+
 	pendingEvents.add(eventType);
 	pendingChanges.set(eventType, summary);
 	startBatchInterval();
+}
+
+function getCurrentJournalLines(): string[] {
+	const currentLogFile = getLatestLogFile();
+	if (!currentLogFile) {
+		return [];
+	}
+
+	return readJournalLines(currentLogFile);
 }
 
 const watcher = new LogFileWatcher();
@@ -143,13 +154,15 @@ watcher.on("file-change", (change: WatchedFileChange) => {
 
 	recordFileChange(change);
 });
+// #endregion
 
+// #region Getters functions for latest events and file header
 /**
  * A function to get the LatestLogFile path
  * @returns A string containing the path of the LatestLogFile
  * @throws Error when logs path is unavailable or no journal log file is found
  */
-export function  getLatestLogFile(): string {
+export function getLatestLogFile(): string {
 	const logPaths = getLogsPath();
 	if (!logPaths) {
 		throw new Error("Logs path is unavailable.");
@@ -165,19 +178,8 @@ export function  getLatestLogFile(): string {
 		const dateB = b.split(".")[1];
 		return dateB.localeCompare(dateA); // décroissant
 	});
-	console.log("📁 File:", files[0]);
-	console.log("✅ Latest log file found:", logPaths);
 	return path.join(logPaths, files[0]);
-	
-}
 
-function getCurrentJournalLines(): string[] {
-	const currentLogFile = getLatestLogFile();
-	if (!currentLogFile) {
-		return [];
-	}
-
-	return readJournalLines(currentLogFile);
 }
 
 /**
@@ -286,6 +288,41 @@ export function getFileHeader(): FileHeader | null {
 	return lastFileHeader;
 }
 
+export function getLatestCommander(): CommanderType | null {
+	if (latestCommander != null) {
+		return latestCommander;
+	}
+	let lastCommander: CommanderType | null = null;
+	try {
+		for (const line of getCurrentJournalLines()) {
+			try {
+				const event = JSON.parse(line);
+				if (event.event === EventEnum.Commander && event.commander) {
+					lastCommander = event.commander as CommanderType;
+				}
+			} catch (err: unknown) {
+				console.warn("🚧 Latest Commander foreach:", getErrorMessage(err));
+				continue;
+			}
+		}
+		if (!lastCommander) {
+			return null;
+		}
+		console.debug(
+			"✅ Found Commander in FileHeader event:",
+			lastCommander,
+			lastCommander ? `CMDR ${lastCommander.Name}` : "",
+		);
+	} catch (error: unknown) {
+		console.warn("🚧 Latest Commander Interpreter:", getErrorMessage(error));
+		return null;
+	}
+
+	return lastCommander;
+}
+// #endregion
+
+// #region Event and File Change Subscription
 /**
  * Subscribe to journal updates (batched, fires once per second)
  * @param callback Function to call with accumulated event types and their changes
@@ -294,6 +331,11 @@ export function onJournalUpdate(callback: (events: EventEnum[], changes: EventCh
 	updateCallbacks.push(callback);
 }
 
+/**
+ * A function to subscribe to journal file changes (new file or update of existing file)
+ * @param callback Function to call with an array of file change events, containing file name, path, type of change and type of file
+ */
 export function onJournalFileChange(callback: (changes: JournalFileChangeEvent[]) => void): void {
 	fileChangeCallbacks.push(callback);
 }
+// #endregion

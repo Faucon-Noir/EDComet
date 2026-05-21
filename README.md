@@ -25,3 +25,25 @@ Example prompts:
 - `@Product Owner Propose 3 high-impact features for EDComet, and prioritize them with ICE scoring model`
 - `@Product Owner Write a user story + acceptance criteria for SSE journal updates.`
 - `@Tech Lead Based on this user story, propose the implementation plan for backend + frontend.`
+
+## ENV
+
+You'll need 2 env file
+
+### Frontend
+
+```env
+VITE_API_BASE_URL=
+```
+
+### Backend
+
+```env
+# SERVER
+PORT="8000"
+
+# CLIENT URL
+CLIENT_URL=
+API_URL=
+API_PREFIX=
+```
