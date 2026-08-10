@@ -1,8 +1,9 @@
 import { Get, Route, Tags } from "tsoa";
-import { getLatestConstructionDepot } from "../services/LogInterpreterService";
+import { getLatestConstructionDepot, getLatestMarket } from "../services/LogInterpreterService";
 import {
 	ColonisationConstructionDepot,
 	ColonisationStats,
+	Market,
 } from "ed-shared";
 import { calculateLatestSiteStats } from "../services/MarketService";
 
@@ -16,5 +17,10 @@ export class ColonisationController {
 	@Get("/latestSite/Stats")
 	public async getLatestSiteStats(): Promise<ColonisationStats | null> {
 		return calculateLatestSiteStats();
+	}
+
+	@Get("/latestMarket")
+	public async getLatestMarket(): Promise<Market | null> {
+		return getLatestMarket();
 	}
 }

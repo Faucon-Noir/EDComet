@@ -2,12 +2,13 @@ import * as fs from "fs";
 import * as path from "path";
 import { getLogsPath } from "../utils/utils";
 import { LogFileWatcher, type WatchedFileChange } from "../utils/watcher";
-import { EventEnum, ShipLoadout, ColonisationConstructionDepot, FileHeader, getErrorMessage, CommanderType } from "ed-shared";
+import { EventEnum, ShipLoadout, ColonisationConstructionDepot, FileHeader, getErrorMessage, CommanderType, Market } from "ed-shared";
 
 let latestLoadout: ShipLoadout | null = null;
 let latestDepot: ColonisationConstructionDepot | null = null;
 let latestFileHeader: FileHeader | null = null;
 let latestCommander: CommanderType | null = null;
+let latestMarket: Market | null = null;
 
 // SSE batching: accumulate changes over 1 second
 export type EventChangeMap = Record<EventEnum, string>;
@@ -150,6 +151,10 @@ watcher.on("line", (line: string) => {
 watcher.on("file-change", (change: WatchedFileChange) => {
 	if (change.type === "journal-switched") {
 		refreshStateFromJournal(change.filePath);
+	}
+
+	if (change.type === "support-file" && change.fileName === "Market.json") {
+		latestMarket = null;
 	}
 
 	recordFileChange(change);
@@ -319,6 +324,41 @@ export function getLatestCommander(): CommanderType | null {
 	}
 
 	return lastCommander;
+}
+
+/**
+ * A function to get the latest Market.json support file content
+ * @returns A Market object or null
+ */
+export function getLatestMarket(): Market | null {
+	if (latestMarket != null) {
+		return latestMarket;
+	}
+
+	const logsPath = getLogsPath();
+	if (!logsPath) {
+		return null;
+	}
+
+	const marketPath = path.join(logsPath, "Market.json");
+	if (!fs.existsSync(marketPath)) {
+		return null;
+	}
+
+	try {
+		const rawContent = fs.readFileSync(marketPath, "utf8");
+		const market = JSON.parse(rawContent) as Market;
+
+		if (market.event !== EventEnum.Market || !Array.isArray(market.Items)) {
+			return null;
+		}
+
+		latestMarket = market;
+		return latestMarket;
+	} catch (error: unknown) {
+		console.warn("🚧 Latest Market Interpreter:", getErrorMessage(error));
+		return null;
+	}
 }
 // #endregion
 

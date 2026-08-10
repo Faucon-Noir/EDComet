@@ -1,6 +1,4 @@
-import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ColonisationConstructionDepot, ColonisationConstructionDepotResource, ColonisationStats } from '../../api';
 import LinearProgressWithLabel from '@mui/material/LinearProgress';
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
@@ -10,97 +8,32 @@ import Checkbox from '@mui/material/Checkbox';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
 import Typography from '@mui/material/Typography';
-import Chip from '@mui/material/Chip';
-import { constructionApi } from '../../utils/api';
-import { useJournalStream } from '../../utils/stream';
-import { JournalStreamEvent } from '../../utils/stream/type';
+import { useConstructionPage } from './hook';
+import {
+  categoryGroupBoxSx,
+  categoryTitleSx,
+  checkedResourceTextSx,
+  progressBoxSx,
+  sectionHeaderBoxSx,
+  sectionTitleSx,
+} from './style';
 
 const ConstructionPage: React.FC = () => {
-  const { t } = useTranslation("page", { keyPrefix: "construction" });
-  const { lastEvent } = useJournalStream();
-
-  const [checked, setChecked] = useState<string[]>([]);
-  const [stats, setStats] = useState<ColonisationStats>();
-  const [eventHistory, setEventHistory] = useState<JournalStreamEvent[]>([]);
-  const [data, setData] = useState<ColonisationConstructionDepot>({
-    timestamp: "",
-    event: "ColonisationConstructionDepot",
-    MarketID: 0,
-    ConstructionProgress: 0,
-    ConstructionComplete: false,
-    ConstructionFailed: false,
-    ResourcesRequired: [],
-  });
-
-  const progress: number = Number((data.ConstructionProgress * 100).toFixed(1));
-
-  useEffect(() => {
-    constructionApi.getLatestSite().then((res) => {
-      setData(res.data);
-    });
-    constructionApi.getLatestSiteStats().then((res) => {
-      setStats(res.data);
-    });
-  }, []);
-
-  useEffect(() => {
-    const hasDepotEvent = lastEvent?.events.some(e => e === "ColonisationConstructionDepot");
-    const hasJournalSwitch = lastEvent?.files?.some(file => file.type === "journal-switched");
-
-    if (!hasDepotEvent && !hasJournalSwitch) {
-      return;
-    }
-
-    constructionApi.getLatestSite().then((res) => {
-      setData(res.data);
-    });
-    constructionApi.getLatestSiteStats().then((res) => {
-      setStats(res.data);
-    });
-  }, [lastEvent]);
-
-  useEffect(() => {
-    if (lastEvent) {
-      setEventHistory(prev => [lastEvent, ...prev].slice(0, 5));
-    }
-  }, [lastEvent]);
-
-  const formatStat = (value: number | undefined): string => {
-    return typeof value === "number" 
-      ? value.toString()
-    : "N/A";
-  };
-
-  const estimatedPayment = formatStat(stats?.estimatedPayment);
-  const totalUnitsRequired = formatStat(stats?.totalUnitsRequired);
-  const travels = formatStat(stats?.travels);
-  const remainingTravels = formatStat(stats?.remainingTravels);
-
-  const statsList = [
-    { label: "stats.estimatedPayment", value: estimatedPayment },
-    { label: "stats.resourcesRequired", value: totalUnitsRequired },
-    { label: "stats.travelsRequired", value: travels },
-    { label: "stats.remainingTravels", value: remainingTravels },
-  ];
-
-  const handleToggle = (name: string) => () => {
-    const currentIndex = checked.indexOf(name);
-    const newChecked = [...checked];
-
-    if (currentIndex === -1) {
-      newChecked.push(name);
-    } else {
-      newChecked.splice(currentIndex, 1);
-    }
-
-    setChecked(newChecked);
-  };
+  const { t } = useTranslation('page', { keyPrefix: 'construction' });
+  const {
+    categorizedResources,
+    formatResourceLabel,
+    handleToggle,
+    isResourceChecked,
+    progress,
+    statsList,
+  } = useConstructionPage();
 
   return (
     <>
       <h1>{t("title")}</h1>
       <div>{t("description")}</div>
-      <Box sx={{ width: "50%", justifySelf: "center", marginTop: "20px" }}>
+      <Box sx={progressBoxSx}>
         {progress}%
         <LinearProgressWithLabel
           color="info"
@@ -112,98 +45,52 @@ const ConstructionPage: React.FC = () => {
         {statsList.map((stat, index) => (
           <span key={stat.label}>
             {t(stat.label)} {stat.value}
-            {index < statsList.length - 1 && " | "}
+            {index < statsList.length - 1 && ' | '}
           </span>
         ))}
       </Box>
-      <Box sx={{ marginTop: "20px" }}>
-        <Box
-          title="Derniers événements du stream"
-          sx={{ paddingBottom: "8px" }}
-        />
-        {/**<Box sx={{ paddingTop: "0px" }}>
-          {eventHistory.length === 0 ? (
-            <Typography >
-              {t("stream.awaiting_events")}
-            </Typography>
-          ) : (
-            <List sx={{ padding: "0px" }}>
-              {eventHistory.map((event, index) => (
-                <ListItem key={event.id} sx={{ paddingY: "8px", borderBottom: index < eventHistory.length - 1 ? "1px solid" : "none" }}>
-                  <Box sx={{ width: "100%" }}>
-                    <Box sx={{ display: "flex", gap: "8px", alignItems: "center", marginBottom: "4px" }}>
-                      <Typography variant="caption" >
-                        #{event.id}
-                      </Typography>
-                      <Typography variant="caption" >
-                        {new Date(event.timestamp).toLocaleTimeString()}
-                      </Typography>
-                    </Box>
-                    <Box sx={{ display: "flex", gap: "4px", flexWrap: "wrap" }}>
-                      {event.events.map((eventType) => (
-                        <Chip
-                          key={eventType}
-                          label={eventType}
-                          size="small"
-                          variant="outlined"
-                          sx={{ height: "24px" }}
-                        />
-                      ))}
-                    </Box>
-                  </Box>
-                </ListItem>
-              ))}
-            </List>
-          )}
-        </Box>**/}
+      <Box sx={sectionHeaderBoxSx}>
+        <Typography variant="h6" sx={sectionTitleSx}>
+          Resources by category
+        </Typography>
       </Box>
       <Box>
-        <List>
-          {[...(data.ResourcesRequired ?? [])]
-            .sort((a, b) => {
-              // Les ressources complétées (diff == 0) vont en bas
-              const diffA = a.RequiredAmount - a.ProvidedAmount;
-              const diffB = b.RequiredAmount - b.ProvidedAmount;
-              if (diffA === 0 && diffB !== 0) return 1;
-              if (diffA !== 0 && diffB === 0) return -1;
-              return 0;
-            })
-            .map((ressource: ColonisationConstructionDepotResource) => {
-              const labelId = `ressource-${ressource.Name}`;
-              const diff = ressource.RequiredAmount - ressource.ProvidedAmount;
-              const isChecked =
-                diff === 0 || checked.indexOf(ressource.Name) !== -1;
-              return (
-                <ListItem key={ressource.Name} dense disablePadding>
-                  <ListItemButton
-                    onClick={handleToggle(ressource.Name)}
-                    disabled={diff === 0}
-                  >
-                    <ListItemIcon>
-                      <Checkbox
-                        edge="start"
-                        checked={isChecked}
-                        tabIndex={-1}
-                        disableRipple
+        {categorizedResources.map((group) => (
+          <Box key={group.key} sx={categoryGroupBoxSx}>
+            <Typography variant="subtitle1" sx={categoryTitleSx}>
+              {group.label}
+            </Typography>
+            <List>
+              {group.resources.map((resource) => {
+                const labelId = `ressource-${resource.Name}`;
+                const diff = resource.RequiredAmount - resource.ProvidedAmount;
+                const isChecked = isResourceChecked(resource);
+                return (
+                  <ListItem key={resource.Name} dense disablePadding>
+                    <ListItemButton
+                      onClick={handleToggle(resource.Name)}
+                      disabled={diff === 0}
+                    >
+                      <ListItemIcon>
+                        <Checkbox
+                          edge="start"
+                          checked={isChecked}
+                          tabIndex={-1}
+                          disableRipple
+                        />
+                      </ListItemIcon>
+                      <ListItemText
+                        id={labelId}
+                        primary={`${formatResourceLabel(resource)} (${diff})`}
+                        sx={isChecked ? checkedResourceTextSx : undefined}
                       />
-                    </ListItemIcon>
-                    <ListItemText
-                      id={labelId}
-                      primary={`${ressource.Name_Localised} (${diff})`}
-                      sx={
-                        isChecked
-                          ? {
-                            textDecoration: "line-through",
-                            color: "grey.500",
-                          }
-                          : {}
-                      }
-                    />
-                  </ListItemButton>
-                </ListItem>
-              );
-            })}
-        </List>
+                    </ListItemButton>
+                  </ListItem>
+                );
+              })}
+            </List>
+          </Box>
+        ))}
       </Box>
     </>
   );
