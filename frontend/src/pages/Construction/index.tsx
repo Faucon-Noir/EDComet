@@ -121,7 +121,7 @@ const ConstructionPage: React.FC = () => {
           title="Derniers événements du stream"
           sx={{ paddingBottom: "8px" }}
         />
-        <Box sx={{ paddingTop: "0px" }}>
+        {/**<Box sx={{ paddingTop: "0px" }}>
           {eventHistory.length === 0 ? (
             <Typography >
               {t("stream.awaiting_events")}
@@ -155,7 +155,7 @@ const ConstructionPage: React.FC = () => {
               ))}
             </List>
           )}
-        </Box>
+        </Box>**/}
       </Box>
       <Box>
         <List>

@@ -3,4 +3,5 @@ export enum EventEnum {
 	Commander = "Commander",
 	FileHeader = "Fileheader",
 	Loadout = "Loadout",
+	Market = "Market",
 }
