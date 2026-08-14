@@ -2,3 +2,8 @@ packages:
   - backend
   - frontend
   - shared
+allowBuilds:
+  '@nestjs/core': true
+  '@openapitools/openapi-generator-cli': true
+  '@scarf/scarf': false
+  esbuild: true
