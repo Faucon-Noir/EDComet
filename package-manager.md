@@ -6,6 +6,13 @@ Package management is now handled with pnpm from the workspace root. See ./docs/
 
 - Node.js 22.x or 24.x
 - Corepack enabled, or pnpm installed
+- Java runtime 17 or newer for the OpenAPI client generator
+
+On Arch-based distributions such as CachyOS, install it with:
+
+```bash
+sudo pacman -S jre-openjdk
+```
 
 ## First startup
 
