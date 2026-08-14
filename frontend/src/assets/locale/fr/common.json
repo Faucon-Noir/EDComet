@@ -1,0 +1,20 @@
+{
+  "title": "ED Comet",
+  "header": {
+    "construction": "Construction",
+    "home": "Accueil",
+    "ship": "Vaisseau",
+    "test": "Test",
+    "sse": {
+      "connecting": "Connexion aux lives updates",
+      "connected": "Lives updates connectées",
+      "disconnected": "Lives updates déconnectées"
+    }
+  },
+  "components": {
+    "error": {
+      "text": "Une erreur est survenue : {{errorMsg}}"
+    },
+    "wip": "Développement en cours"
+  }
+}

@@ -1,5 +1,7 @@
 export enum EventEnum {
 	ColonisationConstructionDepot = "ColonisationConstructionDepot",
-	Loadout = "Loadout",
+	Commander = "Commander",
 	FileHeader = "Fileheader",
+	Loadout = "Loadout",
+	Market = "Market",
 }

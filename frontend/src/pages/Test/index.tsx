@@ -24,7 +24,7 @@ const TestPage: React.FC = () => {
                 <h2>abcdefghijklmnopqrstuvwxyz</h2>
                 <h2>1234567890</h2>
                 <h2>{'&é~"#\'{([-|è`_ \\ ç^à@)]=}$¤£µ*?,.;/:§!€'}</h2>
-                <Box display="flex" justifyContent={'center'} gap="2">
+                <Box sx={{ display: "flex", justifyContent: 'center', gap: 2 }}>
                     {colors.map((color, index) => (
                         <Box
                             key={index}

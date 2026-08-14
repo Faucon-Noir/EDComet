@@ -1,5 +1,7 @@
 import { Delete, Get, Patch, Post, Put, Route, Tags } from "tsoa";
 import { getLanguage } from "../utils/utils";
+import { getLatestCommander } from "../services/LogInterpreterService";
+import { CommanderType } from "ed-shared";
 
 @Route("hello")
 @Tags("Hello")
@@ -16,10 +18,17 @@ export class HelloController {
 			lang: lang,
 		};
 	}
+
 	@Get("/lang")
 	public async getLanguage() {
 		return getLanguage();
 	}
+
+	@Get("/me")
+	public async getMeInfo(): Promise<CommanderType | null> {
+		return getLatestCommander();
+	}
+
 	@Post("/")
 	public async postHello() {
 		console.log("post");

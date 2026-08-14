@@ -9,6 +9,7 @@ import swaggerUi from "swagger-ui-express";
 import { RegisterRoutes } from "./routes";
 import swaggerDocument from "./swagger.json";
 import { getLatestLogFile } from "./services/LogInterpreterService";
+import { sseController } from "./controllers/SseController";
 
 dotenv.config();
 const PORT: number = parseInt(process.env.PORT ||'0');
@@ -16,6 +17,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// SSE endpoint (streaming, managed by SseController)
+app.get("/journal/stream", (req, res): void => {
+	const closeStream = sseController.subscribe(res);
+	req.on("close", closeStream);
+});
 
 RegisterRoutes(app);
 

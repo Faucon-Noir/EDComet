@@ -17,7 +17,14 @@
   },
   "ship": {
     "title": "Your ship",
-    "description": "Here you will find information about your ships, and can select which one you want to use for transportation"
+    "description": "Here you will find information about your ships, and can select which one you want to use for transportation",
+    "emptyState": "No loadout data available yet.",
+    "summary": {
+      "name": "Ship",
+      "identifier": "Identifier",
+      "cargoCapacity": "Cargo capacity",
+      "jumpRange": "Max jump range"
+    }
   },
   "construction": {
     "title": "Your construction projects",
@@ -27,17 +34,12 @@
       "resourcesRequired": "Resources required",
       "travelsRequired": "Travels required",
       "remainingTravels": "Remaining travels"
-    }
-  },
-  "contribute": {
-    "title": "Contribute to ED Comet",
-    "description": "Help us improve ED Comet by contributing data, code, or feedback. Your contributions are valuable to us and the community.",
-    "translate": {
-      "title": "Translate ED Comet",
-      "text": "If you are fluent in any language and would like to help translate ED Comet, please visit our GitHub repository. We welcome contributions in all languages!",
-      "link": "Join the translation effort on GitHub"
     },
-    "getStarted": "To get started, visit our GitHub page or contact us directly. We appreciate your support in making ED Comet a better tool for everyone!"
+    "stream":{
+      "connected": "Live updates connected",
+      "disconnected": "Live updates disconnected",
+      "awaiting_events": "Waiting for events..."
+    }
   },
   "test": {
     "title": "Test Page"
