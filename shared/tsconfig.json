@@ -1,9 +1,11 @@
 {
 	"compilerOptions": {
 		"target": "es2016",
-		"lib": ["es2016"],
+		"lib": [
+			"es2016"
+		],
 		"module": "esnext",
-		"moduleResolution": "node",
+		"moduleResolution": "bundler",
 		"outDir": "./dist",
 		"rootDir": ".",
 		"declaration": true,
@@ -15,5 +17,9 @@
 		"noImplicitAny": true,
 		"strict": true
 	},
-	"include": ["index.ts", "types/**/*", "helper/**/*"]
+	"include": [
+		"index.ts",
+		"types/**/*",
+		"helper/**/*"
+	]
 }

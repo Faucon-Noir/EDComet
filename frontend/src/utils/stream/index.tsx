@@ -1,114 +1,125 @@
 import {
-	createContext,
-	useContext,
-	useEffect,
-	useRef,
-	useState,
-	type PropsWithChildren,
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  type PropsWithChildren,
 } from "react";
 import { EventEnum } from "ed-shared";
-import { JournalStreamContextValue, JournalStreamEvent, JournalStreamStatus } from "./type";
+import { getJournalStreamUrl } from "../api";
+import {
+  JournalStreamContextValue,
+  JournalStreamEvent,
+  JournalStreamStatus,
+} from "./type";
 
-const JournalStreamContext =
-	createContext<JournalStreamContextValue | null>(null);
+const JournalStreamContext = createContext<JournalStreamContextValue | null>(
+  null,
+);
 
 const supportedEventTypes: EventEnum[] = [
-	EventEnum.Loadout,
-	EventEnum.ColonisationConstructionDepot,
-	EventEnum.FileHeader,
+  EventEnum.Loadout,
+  EventEnum.ColonisationConstructionDepot,
+  EventEnum.FileHeader,
+  EventEnum.MarketBuy,
 ];
 
-function buildJournalStreamUrl(): string {
-	const env = import.meta.env as ImportMetaEnv & {
-		readonly VITE_API_BASE_URL?: string;
-	};
-	const baseUrl = env.VITE_API_BASE_URL?.trim();
-
-	if (!baseUrl) {
-		return "/journal/stream";
-	}
-
-	return `${baseUrl.replace(/\/+$/, "")}/journal/stream`;
-}
-
 export function JournalStreamProvider({
-	children,
+  children,
 }: PropsWithChildren): JSX.Element {
-	const [status, setStatus] = useState<JournalStreamStatus>("connecting");
-	const [lastEvent, setLastEvent] = useState<JournalStreamEvent | null>(null);
-	const lastEventIdRef = useRef<string | null>(null);
+  const [status, setStatus] = useState<JournalStreamStatus>("connecting");
+  const [lastEvent, setLastEvent] = useState<JournalStreamEvent | null>(null);
+  const lastEventIdRef = useRef<string | null>(null);
 
-	useEffect(() => {
-		const eventSource = new EventSource(buildJournalStreamUrl());
+  useEffect(() => {
+    let eventSource: EventSource | undefined;
+    let disposed = false;
 
-		eventSource.onopen = () => {
-			setStatus("connected");
-		};
+    const handleMessage = (message: MessageEvent<string>) => {
+      try {
+        const payload = JSON.parse(message.data) as Partial<JournalStreamEvent>;
+        // console.debug("📡 Received SSE message", payload);
+        const eventId = payload.id ?? message.lastEventId;
 
-		eventSource.onerror = () => {
-			setStatus("disconnected");
-		};
+        if (!eventId || lastEventIdRef.current === eventId) {
+          return;
+        }
 
-		const handleMessage = (message: MessageEvent<string>) => {
-			try {
-				const payload = JSON.parse(message.data) as Partial<JournalStreamEvent>;
-				// console.debug("📡 Received SSE message", payload);
-				const eventId = payload.id ?? message.lastEventId;
+        // Filter for supported event types
+        const validEvents = (payload.events ?? []).filter(
+          (event): event is EventEnum =>
+            supportedEventTypes.includes(event as EventEnum),
+        );
 
-				if (!eventId || lastEventIdRef.current === eventId) {
-					return;
-				}
+        if (validEvents.length === 0) {
+          return;
+        }
 
-				// Filter for supported event types
-				const validEvents = (payload.events ?? []).filter(
-					(event): event is EventEnum =>
-						supportedEventTypes.includes(event as EventEnum)
-				);
+        lastEventIdRef.current = eventId;
+        setLastEvent({
+          id: eventId,
+          events: validEvents,
+          files: Array.isArray(payload.files) ? payload.files : [],
+          timestamp:
+            typeof payload.timestamp === "string"
+              ? payload.timestamp
+              : new Date().toISOString(),
+        });
+        setStatus("connected");
+      } catch (error) {
+        console.warn("Invalid SSE payload", error);
+      }
+    };
 
-				if (validEvents.length === 0) {
-					return;
-				}
+    void getJournalStreamUrl()
+      .then((url) => {
+        if (disposed) {
+          return;
+        }
 
-				lastEventIdRef.current = eventId;
-				setLastEvent({
-					id: eventId,
-					events: validEvents,
-					files: Array.isArray(payload.files) ? payload.files : [],
-					timestamp:
-						typeof payload.timestamp === "string"
-							? payload.timestamp
-							: new Date().toISOString(),
-				});
-				setStatus("connected");
-			} catch (error) {
-				console.warn("Invalid SSE payload", error);
-			}
-		};
+        eventSource = new EventSource(url);
+        eventSource.onopen = () => {
+          setStatus("connected");
+        };
+        eventSource.onerror = () => {
+          setStatus("disconnected");
+        };
+        eventSource.addEventListener(
+          "journal-update",
+          handleMessage as EventListener,
+        );
+      })
+      .catch((error: unknown) => {
+        console.warn("Unable to create journal SSE stream", error);
+        setStatus("disconnected");
+      });
 
-		eventSource.addEventListener("journal-update", handleMessage as EventListener);
+    return () => {
+      disposed = true;
+      eventSource?.removeEventListener(
+        "journal-update",
+        handleMessage as EventListener,
+      );
+      eventSource?.close();
+    };
+  }, []);
 
-		return () => {
-			eventSource.removeEventListener(
-				"journal-update",
-				handleMessage as EventListener
-			);
-			eventSource.close();
-		};
-	}, []);
-
-	return (
-		<JournalStreamContext.Provider value={{ status, lastEvent }}>
-			{children}
-		</JournalStreamContext.Provider>
-	);
+  return (
+    <JournalStreamContext.Provider value={{ status, lastEvent }}>
+      {children}
+    </JournalStreamContext.Provider>
+  );
 }
 
 export function useJournalStream(): JournalStreamContextValue {
-	const context = useContext(JournalStreamContext);
+  const context = useContext(JournalStreamContext);
 
-	if (context == null) {
-		throw new Error("useJournalStream must be used within JournalStreamProvider");
-	}
+  if (context == null) {
+    throw new Error(
+      "useJournalStream must be used within JournalStreamProvider",
+    );
+  }
 
-	return context;
+  return context;
 }

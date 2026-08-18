@@ -1,23 +1,24 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import type {
   ColonisationConstructionDepotResource,
   ColonisationStats,
   Market,
   MarketItem,
-} from '../../api';
-import { constructionApi } from '../../utils/api';
-import { useJournalStream } from '../../utils/stream';
+} from "../../api";
+import { constructionApi } from "../../utils/api";
+import { useJournalStream } from "../../utils/stream";
 import type {
   CategorizedResourceGroup,
   ConstructionStatItem,
   StoredCategoryMap,
-} from './type';
+} from "./type";
 import {
   CATEGORY_STORAGE_KEY,
   EMPTY_CONSTRUCTION_DEPOT,
   OTHER_CATEGORY_KEY,
   OTHER_CATEGORY_LABEL,
-} from './type';
+} from "./type";
 
 interface UseConstructionPageResult {
   categorizedResources: CategorizedResourceGroup[];
@@ -36,9 +37,9 @@ const normalizeWhitespace = (value: string): string => value.trim();
 
 const formatFallbackCategoryLabel = (category: string): string => {
   const cleanedCategory = category
-    .replace(/^\$MARKET_category_/i, '')
-    .replace(/;$/, '')
-    .replace(/_/g, ' ')
+    .replace(/^\$MARKET_category_/i, "")
+    .replace(/;$/, "")
+    .replace(/_/g, " ")
     .trim();
 
   if (cleanedCategory.length === 0) {
@@ -48,28 +49,28 @@ const formatFallbackCategoryLabel = (category: string): string => {
   return cleanedCategory.replace(/\b\w/g, (letter) => letter.toUpperCase());
 };
 
-const getCategoryKey = (item: Pick<MarketItem, 'Category'>): string => {
-  const category = normalizeWhitespace(item.Category ?? '');
+const getCategoryKey = (item: Pick<MarketItem, "Category">): string => {
+  const category = normalizeWhitespace(item.Category ?? "");
   return category.length > 0 ? category : OTHER_CATEGORY_KEY;
 };
 
 const getCategoryLabel = (
-  item: Pick<MarketItem, 'Category' | 'Category_Localised'>,
+  item: Pick<MarketItem, "Category" | "Category_Localised">,
 ): string => {
-  const localized = normalizeWhitespace(item.Category_Localised ?? '');
+  const localized = normalizeWhitespace(item.Category_Localised ?? "");
 
   if (localized.length > 0) {
     return localized;
   }
 
-  const category = normalizeWhitespace(item.Category ?? '');
+  const category = normalizeWhitespace(item.Category ?? "");
   return category.length > 0
     ? formatFallbackCategoryLabel(category)
     : OTHER_CATEGORY_LABEL;
 };
 
 const getResourceLabel = (name: string, localizedName?: string): string => {
-  const localized = normalizeWhitespace(localizedName ?? '');
+  const localized = normalizeWhitespace(localizedName ?? "");
   return localized.length > 0 ? localized : name;
 };
 
@@ -79,9 +80,11 @@ const sortResources = (
   checkedResources: Set<string>,
 ): number => {
   const leftChecked =
-    left.RequiredAmount - left.ProvidedAmount === 0 || checkedResources.has(left.Name);
+    left.RequiredAmount - left.ProvidedAmount === 0 ||
+    checkedResources.has(left.Name);
   const rightChecked =
-    right.RequiredAmount - right.ProvidedAmount === 0 || checkedResources.has(right.Name);
+    right.RequiredAmount - right.ProvidedAmount === 0 ||
+    checkedResources.has(right.Name);
 
   if (leftChecked && !rightChecked) {
     return 1;
@@ -94,7 +97,7 @@ const sortResources = (
   return getResourceLabel(left.Name, left.Name_Localised).localeCompare(
     getResourceLabel(right.Name, right.Name_Localised),
     undefined,
-    { sensitivity: 'base' },
+    { sensitivity: "base" },
   );
 };
 
@@ -110,11 +113,13 @@ const sortCategoryGroups = (
     return -1;
   }
 
-  return left.label.localeCompare(right.label, undefined, { sensitivity: 'base' });
+  return left.label.localeCompare(right.label, undefined, {
+    sensitivity: "base",
+  });
 };
 
 const readStoredCategoryMap = (): StoredCategoryMap => {
-  if (typeof window === 'undefined') {
+  if (typeof window === "undefined") {
     return {};
   }
 
@@ -125,18 +130,21 @@ const readStoredCategoryMap = (): StoredCategoryMap => {
 
   try {
     const parsedValue = JSON.parse(storedValue) as StoredCategoryMap;
-    return parsedValue && typeof parsedValue === 'object' ? parsedValue : {};
+    return parsedValue && typeof parsedValue === "object" ? parsedValue : {};
   } catch {
     return {};
   }
 };
 
 const persistCategoryMap = (categoryMap: StoredCategoryMap): void => {
-  if (typeof window === 'undefined') {
+  if (typeof window === "undefined") {
     return;
   }
 
-  window.localStorage.setItem(CATEGORY_STORAGE_KEY, JSON.stringify(categoryMap));
+  window.localStorage.setItem(
+    CATEGORY_STORAGE_KEY,
+    JSON.stringify(categoryMap),
+  );
 };
 
 const mergeCategoryMaps = (...maps: StoredCategoryMap[]): StoredCategoryMap => {
@@ -204,7 +212,9 @@ const ensureOtherCategoryResources = (
     });
   }
 
-  const missingResources = resources.filter(({ Name }) => !knownResourceNames.has(Name));
+  const missingResources = resources.filter(
+    ({ Name }) => !knownResourceNames.has(Name),
+  );
 
   if (missingResources.length === 0) {
     return categoryMap;
@@ -285,11 +295,14 @@ const buildCategorizedResources = (
     .sort(sortCategoryGroups);
 };
 
-const formatStat = (value: number | undefined): string => {
-  return typeof value === 'number' ? value.toString() : 'N/A';
+const formatStat = (value: number | undefined, locale: string): string => {
+  return typeof value === "number"
+    ? new Intl.NumberFormat(locale).format(value)
+    : "N/A";
 };
 
 export const useConstructionPage = (): UseConstructionPageResult => {
+  const { i18n } = useTranslation();
   const { lastEvent } = useJournalStream();
 
   const [checked, setChecked] = useState<string[]>([]);
@@ -308,11 +321,16 @@ export const useConstructionPage = (): UseConstructionPageResult => {
   ): void => {
     setCategoryMap((previousCategoryMap) => {
       const nextCategoryMap = ensureOtherCategoryResources(
-        mergeCategoryMaps(previousCategoryMap, buildCategoryMapFromMarket(market)),
+        mergeCategoryMaps(
+          previousCategoryMap,
+          buildCategoryMapFromMarket(market),
+        ),
         resources,
       );
 
-      if (JSON.stringify(nextCategoryMap) === JSON.stringify(previousCategoryMap)) {
+      if (
+        JSON.stringify(nextCategoryMap) === JSON.stringify(previousCategoryMap)
+      ) {
         return previousCategoryMap;
       }
 
@@ -341,12 +359,17 @@ export const useConstructionPage = (): UseConstructionPageResult => {
   }, []);
 
   useEffect(() => {
-    const hasDepotEvent = lastEvent?.events.some((eventName) => eventName === 'ColonisationConstructionDepot');
+    const hasDepotEvent = lastEvent?.events.some(
+      (eventName) => eventName === "ColonisationConstructionDepot",
+    );
+    const hasMarketBuyEvent = lastEvent?.events.some(
+      (eventName) => eventName === "MarketBuy",
+    );
     const hasJournalSwitch = lastEvent?.files?.some(
-      (file) => file.type === 'journal-switched',
+      (file) => file.type === "journal-switched",
     );
 
-    if (!hasDepotEvent && !hasJournalSwitch) {
+    if (!hasDepotEvent && !hasMarketBuyEvent && !hasJournalSwitch) {
       return;
     }
 
@@ -381,10 +404,30 @@ export const useConstructionPage = (): UseConstructionPageResult => {
   };
 
   const statsList: ConstructionStatItem[] = [
-    { label: 'stats.estimatedPayment', value: formatStat(stats?.estimatedPayment) },
-    { label: 'stats.resourcesRequired', value: formatStat(stats?.totalUnitsRequired) },
-    { label: 'stats.travelsRequired', value: formatStat(stats?.travels) },
-    { label: 'stats.remainingTravels', value: formatStat(stats?.remainingTravels) },
+    {
+      label: "stats.estimatedPayment",
+      value: formatStat(stats?.estimatedPayment, i18n.language),
+    },
+    {
+      label: "stats.actualPurchaseCost",
+      value: formatStat(stats?.actualPurchaseCost, i18n.language),
+    },
+    {
+      label: "stats.estimatedProfit",
+      value: formatStat(stats?.estimatedProfit, i18n.language),
+    },
+    {
+      label: "stats.resourcesRequired",
+      value: formatStat(stats?.totalUnitsRequired, i18n.language),
+    },
+    {
+      label: "stats.travelsRequired",
+      value: formatStat(stats?.travels, i18n.language),
+    },
+    {
+      label: "stats.remainingTravels",
+      value: formatStat(stats?.remainingTravels, i18n.language),
+    },
   ];
 
   return {

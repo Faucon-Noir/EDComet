@@ -1,20 +1,26 @@
-import type { Response } from "express";
+import type { Readable } from "stream";
+import { Controller, Get, Produces, Request, Route, Tags } from "tsoa";
 import { journalSseService } from "../services/SseService";
 
 /**
  * Controller to manage SSE (Server-Sent Events) journal stream
- * Note: Endpoint is registered directly in index.ts as tsoa doesn't support streaming responses
  */
-export class SseController {
-	/**
-	 * Subscribe a response to journal updates via SSE
-	 * @param response Express Response object
-	 * @returns Cleanup function to close the stream
-	 */
-	public subscribe(response: Response): () => void {
-		return journalSseService.subscribe(response);
-	}
+@Route("journal")
+@Tags("Journal")
+export class SseController extends Controller {
+  /**
+   * Subscribe to journal updates via SSE.
+   */
+  @Get("stream")
+  @Produces("text/event-stream")
+  public stream(@Request() request: any): Readable {
+    const stream = journalSseService.subscribe();
+
+    request.on("close", () => stream.destroy());
+    this.setHeader("Cache-Control", "no-cache, no-transform");
+    this.setHeader("Connection", "keep-alive");
+    this.setHeader("Content-Type", "text/event-stream");
+
+    return stream;
+  }
 }
-
-export const sseController = new SseController();
-

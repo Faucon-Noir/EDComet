@@ -31,11 +31,13 @@
     "description": "Here you will find information about your construction projects, such as their status, progress, ressources required, and more.",
     "stats": {
       "estimatedPayment": "Estimated payment",
+      "actualPurchaseCost": "Actual purchase cost",
+      "estimatedProfit": "Estimated profit",
       "resourcesRequired": "Resources required",
       "travelsRequired": "Travels required",
       "remainingTravels": "Remaining travels"
     },
-    "stream":{
+    "stream": {
       "connected": "Live updates connected",
       "disconnected": "Live updates disconnected",
       "awaiting_events": "Waiting for events..."

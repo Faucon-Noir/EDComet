@@ -3,10 +3,10 @@ import { Get, Route, Tags } from "tsoa";
 import { getLoadout } from "../services/LogInterpreterService";
 
 @Route("ship")
-@Tags("ship")
+@Tags("Ship")
 export class ShipController {
-	@Get("/loadout")
-	public async getShipLoadout(): Promise<ShipLoadout | null> {
-		return getLoadout();
-	}
+  @Get("/loadout")
+  public async getShipLoadout(): Promise<ShipLoadout | null> {
+    return getLoadout();
+  }
 }

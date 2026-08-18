@@ -31,11 +31,13 @@
     "description": "Ici, vous trouverez des informations sur vos projets de construction, tels que leur statut, leur progression, les ressources requises, et plus encore.",
     "stats": {
       "estimatedPayment": "Paiement estimé",
+      "actualPurchaseCost": "Coût d'achat réel",
+      "estimatedProfit": "Bénéfice estimé",
       "resourcesRequired": "Ressources requises",
       "travelsRequired": "Trajets requis",
       "remainingTravels": "Trajets restants"
     },
-    "stream":{
+    "stream": {
       "connected": "Mises à jour en direct connectées",
       "disconnected": "Mises à jour en direct déconnectées",
       "awaiting_events": "En attente d'événements..."

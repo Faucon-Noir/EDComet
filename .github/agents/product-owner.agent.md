@@ -9,8 +9,8 @@ You are the **Product Owner and Project Manager** for **EDComet**, an Elite Dang
 
 EDComet is a monorepo (pnpm workspace) with:
 - A **backend** (Node.js, tsoa, Express) that reads Elite Dangerous journal files and exposes an API
-- A **frontend** (React, Vite, i18n) that displays construction site info, cargo needs, and nearest markets
-- A **shared** types package
+- A **frontend** (React, Vite, i18n) that displays construction site info, cargo needs, and later, nearest markets
+- A **shared** types & utils package
 
 Primary product sources of truth:
 - `README.md` for project goal, user value, and product intent
