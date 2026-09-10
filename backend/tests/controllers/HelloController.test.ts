@@ -1,14 +1,14 @@
 /// <reference types="jest" />
 
-import { HelloController } from "../controllers/HelloController";
-import { getLanguage } from "../utils/utils";
-import { getLatestCommander } from "../services/LogInterpreterService";
+import { HelloController } from "../../src/controllers/HelloController";
+import { getLanguage } from "../../src/utils/utils";
+import { getLatestCommander } from "../../src/services/LogInterpreterService";
 
-jest.mock("../utils/utils", () => ({
+jest.mock("../../src/utils/utils", () => ({
   getLanguage: jest.fn(),
 }));
 
-jest.mock("../services/LogInterpreterService", () => ({
+jest.mock("../../src/services/LogInterpreterService", () => ({
   getLatestCommander: jest.fn(),
 }));
 
@@ -51,5 +51,20 @@ describe("HelloController", () => {
     const controller = new HelloController();
 
     await expect(controller.getMeInfo()).resolves.toBeNull();
+  });
+
+  it("handles mutation endpoints", async () => {
+    const controller = new HelloController();
+    const logSpy = jest.spyOn(console, "log").mockImplementation();
+
+    await controller.postHello();
+    await controller.putHello();
+    await controller.patchHello();
+    await controller.delHello();
+
+    expect(logSpy).toHaveBeenNthCalledWith(1, "post");
+    expect(logSpy).toHaveBeenNthCalledWith(2, "put");
+    expect(logSpy).toHaveBeenNthCalledWith(3, "patch");
+    expect(logSpy).toHaveBeenNthCalledWith(4, "delete");
   });
 });

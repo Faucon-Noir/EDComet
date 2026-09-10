@@ -1,10 +1,10 @@
 /// <reference types="jest" />
 
 import { PassThrough } from "stream";
-import { SseController } from "../controllers/SseController";
-import { journalSseService } from "../services/SseService";
+import { SseController } from "../../src/controllers/SseController";
+import { journalSseService } from "../../src/services/SseService";
 
-jest.mock("../services/SseService", () => ({
+jest.mock("../../src/services/SseService", () => ({
   journalSseService: {
     subscribe: jest.fn(),
   },

@@ -35,7 +35,7 @@ describe("journalSseService", () => {
     let updateCallback: UpdateCallback | undefined;
     let fileCallback: FileCallback | undefined;
 
-    jest.doMock("../services/LogInterpreterService", () => ({
+    jest.doMock("../../src/services/LogInterpreterService", () => ({
       onJournalUpdate: jest.fn((cb: UpdateCallback) => {
         updateCallback = cb;
       }),
@@ -44,7 +44,7 @@ describe("journalSseService", () => {
       }),
     }));
 
-    const mod = require("../services/SseService") as {
+    const mod = require("../../src/services/SseService") as {
       journalSseService: { subscribe: () => PassThrough };
     };
 
@@ -73,6 +73,44 @@ describe("journalSseService", () => {
     const initialChunk = stream.read()?.toString() ?? "";
 
     expect(initialChunk).toContain("retry: 5000");
+  });
+
+  it("writes a heartbeat while the subscribed stream is active", () => {
+    jest.useFakeTimers();
+    const { service } = setupModule();
+    const stream = service.subscribe();
+    subscribedStreams.push(stream);
+    const writeSpy = jest.spyOn(stream, "write");
+
+    jest.advanceTimersByTime(30000);
+
+    expect(writeSpy).toHaveBeenCalledWith(": keep-alive\n\n");
+    jest.useRealTimers();
+  });
+
+  it("stops heartbeats when the subscriber closes", () => {
+    jest.useFakeTimers();
+    const { service } = setupModule();
+    const stream = service.subscribe();
+    subscribedStreams.push(stream);
+    const writeSpy = jest.spyOn(stream, "write");
+
+    stream.emit("close");
+    jest.advanceTimersByTime(30000);
+
+    expect(writeSpy).not.toHaveBeenCalled();
+    jest.useRealTimers();
+  });
+
+  it("removes a destroyed client before broadcasting", () => {
+    const { service, getUpdateCallback } = setupModule();
+    const stream = service.subscribe();
+    subscribedStreams.push(stream);
+    stream.destroy();
+
+    getUpdateCallback()([EventEnum.Loadout], {} as Record<EventEnum, string>);
+
+    expect(stream.writableEnded || stream.destroyed).toBe(true);
   });
 
   it("broadcasts valid journal events", () => {
@@ -129,5 +167,16 @@ describe("journalSseService", () => {
     expect(writeSpy).toHaveBeenCalledWith(
       expect.stringContaining("Journal.01.log"),
     );
+  });
+
+  it("does not broadcast when both events and files are empty", () => {
+    const { service, getUpdateCallback } = setupModule();
+    const stream = service.subscribe();
+    subscribedStreams.push(stream);
+    const writeSpy = jest.spyOn(stream, "write");
+
+    getUpdateCallback()([], {} as Record<EventEnum, string>);
+
+    expect(writeSpy).not.toHaveBeenCalled();
   });
 });
