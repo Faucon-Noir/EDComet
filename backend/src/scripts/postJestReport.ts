@@ -116,7 +116,7 @@ function formatPct(pct: number): string {
   if (Number.isNaN(pct)) {
     return "0";
   }
-  return Number(pct.toFixed(2)).toString();
+  return (Math.floor(pct * 100) / 100).toString();
 }
 
 function pct(covered: number, total: number): number {
@@ -144,37 +144,59 @@ function parseLcovUncoveredLineMap(lcovRaw: string): Map<string, string> {
     const sfPath = sf.slice(3);
     const normalizedPath = normalizeForCoverage(sfPath);
 
-    const uncovered = lines
+    const lineCoverage = lines
       .filter((line) => line.startsWith("DA:"))
-      .map((line) => line.slice(3).split(","))
-      .filter((parts) => parts.length >= 2)
-      .filter((parts) => Number(parts[1]) === 0)
-      .map((parts) => Number(parts[0]))
-      .filter((lineNo) => Number.isFinite(lineNo))
-      .sort((a, b) => a - b);
+      .map((line) => {
+        const [lineNo, hits] = line.slice(3).split(",");
+        return { lineNo: Number(lineNo), covered: hits !== "0" && hits !== "-" };
+      });
+    const hasUncoveredLines = lineCoverage.some((entry) => !entry.covered);
+    const branchCoverage = new Map<number, boolean>();
 
-    if (uncovered.length === 0) {
+    if (!hasUncoveredLines) {
+      for (const line of lines.filter((entry) => entry.startsWith("BRDA:"))) {
+        const [lineNo, , , hits] = line.slice(5).split(",");
+        const lineNumber = Number(lineNo);
+        if (Number.isFinite(lineNumber)) {
+          branchCoverage.set(
+            lineNumber,
+            (branchCoverage.get(lineNumber) ?? true) && hits !== "0" && hits !== "-",
+          );
+        }
+      }
+    }
+
+    const coverageByLine = hasUncoveredLines
+      ? lineCoverage
+      : Array.from(branchCoverage, ([lineNo, covered]) => ({ lineNo, covered }));
+    if (coverageByLine.length === 0) {
       map.set(normalizedPath, "");
       continue;
     }
 
     const ranges: string[] = [];
-    let start = uncovered[0];
-    let prev = uncovered[0];
+    let rangeStart: number | undefined;
+    let rangeEnd: number | undefined;
 
-    for (let i = 1; i < uncovered.length; i += 1) {
-      const current = uncovered[i];
-      if (current === prev + 1) {
-        prev = current;
+    for (const { lineNo, covered } of coverageByLine) {
+      if (covered) {
+        if (rangeStart !== undefined) {
+          ranges.push(rangeStart === rangeEnd ? `${rangeStart}` : `${rangeStart}-${rangeEnd}`);
+          rangeStart = undefined;
+          rangeEnd = undefined;
+        }
         continue;
       }
 
-      ranges.push(start === prev ? `${start}` : `${start}-${prev}`);
-      start = current;
-      prev = current;
+      if (rangeStart === undefined) {
+        rangeStart = lineNo;
+      }
+      rangeEnd = lineNo;
     }
 
-    ranges.push(start === prev ? `${start}` : `${start}-${prev}`);
+    if (rangeStart !== undefined) {
+      ranges.push(rangeStart === rangeEnd ? `${rangeStart}` : `${rangeStart}-${rangeEnd}`);
+    }
     map.set(normalizedPath, ranges.join(","));
   }
 
