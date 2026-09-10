@@ -1,4 +1,4 @@
-name: Minimal Coverage
+name: Frontend Minimal Coverage
 
 on:
   pull_request:
@@ -7,8 +7,8 @@ permissions:
   contents: read
 
 jobs:
-  validate:
-    name: Test, coverage and build
+  frontend:
+    name: Frontend tests and build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -28,5 +28,16 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Validate pull request
-        run: pnpm run ci
+      - name: Run frontend tests
+        run: pnpm --filter ed-comet run test:report
+
+      - name: Build frontend
+        run: pnpm --filter ed-comet run build
+
+      - name: Upload frontend test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-test-report
+          path: frontend/test-report
+          if-no-files-found: warn
