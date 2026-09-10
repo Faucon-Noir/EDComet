@@ -10,6 +10,7 @@
 		"sourceMap": true,
 		"esModuleInterop": true,
 		"resolveJsonModule": true,
+		"types": ["node", "jest"],
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
 		"noImplicitAny": true

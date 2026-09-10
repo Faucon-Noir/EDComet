@@ -22,14 +22,6 @@ Scale used: Impact, Confidence, Ease from 1 to 10. ICE = Impact x Confidence x E
 - Reference product brief: `docs/sse-journal-updates.md`.
 - FriendStatus is gated by a technical feasibility check in ED logs before implementation.
 
-## Ready backlog for SSE MVP
-
-- Backend: expose one SSE endpoint for journal updates.
-- Backend: normalize watcher events into a stable SSE envelope.
-- Frontend: subscribe to SSE and surface connection state.
-- Frontend: map event types to targeted REST re-fetch actions.
-- Validation: guarantee no full page reload and no duplicate visible refresh on reconnect.
-
 ### Chokidar
 
 "client:watch": "chokidar '../backend/src/generated/swagger.json' -c 'pnpm run gen:client'",
