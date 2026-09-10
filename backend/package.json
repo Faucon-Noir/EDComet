@@ -8,6 +8,7 @@
 		"open:test-report": "open-cli ./coverage/jest-report.html",
 		"test": "jest --config ./jest.config.cjs --runInBand --detectOpenHandles --coverage",
 		"posttest": "tsx ./src/scripts/postJestReport.ts",
+		"test:ci": "pnpm run test && tsx ./src/scripts/checkCoverage.ts",
 		"test:html": "pnpm run test && pnpm run open:test-report",
 		"test:watch": "jest --config ./jest.config.cjs --watch",
 		"tsoa:gen": "tsx ./src/scripts/preTsoaGen.ts && tsoa spec && echo ✅ tsoa spec generated && tsoa routes && echo ✅ tsoa routes generated && pnpm --dir ../frontend run client:gen",

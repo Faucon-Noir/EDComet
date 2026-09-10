@@ -8,6 +8,7 @@
 		"build": "pnpm --filter ed-comet run build",
 		"lint": "pnpm --filter ed-comet run lint",
 		"test": "pnpm --filter ed-comet-backend run test",
+		"ci": "pnpm --filter ed-comet-backend run test:ci && pnpm --filter ed-comet run build",
 		"client:gen": "pnpm --filter ed-comet run client:gen",
 		"tsoa:gen": "pnpm --filter ed-comet-backend run tsoa:gen"
 	}
