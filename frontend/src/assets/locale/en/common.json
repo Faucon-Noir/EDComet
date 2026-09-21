@@ -4,6 +4,7 @@
     "construction": "Construction",
     "home": "Home",
     "ship": "Ship",
+    "mission": "Mission",
     "test": "Test",
     "sse": {
       "connecting": "Live updates connecting",

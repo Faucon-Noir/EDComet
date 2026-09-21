@@ -43,6 +43,10 @@
       "awaiting_events": "Waiting for events..."
     }
   },
+  "mission":{
+    "title": "Your missions",
+    "description": "Here you will find information about your missions, such as their objectives, progress, rewards, and more."
+  },
   "test": {
     "title": "Test Page"
   }
