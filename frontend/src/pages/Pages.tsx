@@ -17,6 +17,7 @@ const Pages = () => {
         <Route path={Home} element={<HomePage />} />
         <Route path={Ship} element={<ShipPage />} />
         <Route path={Stats} element={<StatsPage />} />
+        <Route path={Mission} element={<ShipPage />} />
         {/* <Route path={Test} element={<TestPage />} /> */}
       </Route>
     </Routes>

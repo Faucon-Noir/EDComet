@@ -6,6 +6,7 @@ export const navItem: NavItemType[] = [
   { nav: "construction", link: Construction },
   { nav: "ship", link: Ship },
   { nav: "stats", link: Stats },
+  { nav: "mission", link: Mission },
 ];
 
 export const lang = [
