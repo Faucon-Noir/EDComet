@@ -6,4 +6,5 @@ export enum EventEnum {
   Market = "Market",
   MarketBuy = "MarketBuy",
   MarketSell = "MarketSell",
+  Stats = "Stats",
 }
