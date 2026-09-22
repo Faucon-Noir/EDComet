@@ -1,6 +1,6 @@
 import { ShipLoadout } from "ed-shared";
 import { Get, Route, Tags } from "tsoa";
-import { getLoadout } from "../services/LogInterpreterService";
+import { getLoadout } from "../services/ShipService";
 
 @Route("ship")
 @Tags("Ship")
