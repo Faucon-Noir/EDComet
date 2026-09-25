@@ -1,0 +1,58 @@
+name: Frontend Minimal Coverage
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  frontend:
+    name: Frontend tests and build
+    runs-on: ubuntu-latest
+    env:
+      API_URL: localhost:8000
+      API_PREFIX: api
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.21.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate backend API spec
+        run: pnpm --filter ed-comet-backend run tsoa:gen:backend
+
+      - name: Generate frontend API client
+        run: pnpm --filter ed-comet run client:gen
+
+      - name: Run frontend tests
+        run: pnpm --filter ed-comet run test:report
+
+      - name: Build frontend
+        run: pnpm --filter ed-comet run build
+
+      - name: Upload frontend test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-test-report
+          path: frontend/test-report
+          if-no-files-found: warn

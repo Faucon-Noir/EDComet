@@ -1,0 +1,149 @@
+:root {
+  --text-primary: #ffffffde;
+  --text-secondary: #d0d7e4;
+  --success: #96f2c4;
+  --success-bright: rgba(40, 167, 69, 0.22);
+  --danger: #ff9aa8;
+  --danger-bright: rgba(255, 75, 98, 0.18);
+  --warning: #ffd27d;
+  --warning-bright: rgba(255, 190, 64, 0.2);
+  --panel: rgba(10, 26, 53, 0.75);
+  --border: rgba(164, 177, 207, 0.45);
+  --disabled: #8ea0c2;
+}
+
+html,
+body {
+  font-family: SansationLight, "Segoe UI", sans-serif;
+  color: var(--text-primary);
+}
+
+body {
+  background: radial-gradient(circle at 20% 20%, #05265b 0%, #000000 78%);
+}
+
+.jesthtml-content {
+  max-width: 78rem;
+}
+
+#timestamp,
+.additional-information-container,
+.suite-info,
+.suite-consolelog-item-origin {
+  color: var(--text-secondary);
+}
+
+#summary > div,
+.suite-info,
+.suite-consolelog {
+  background: var(--panel);
+  border-color: var(--border);
+  border-radius: 10px;
+}
+
+.suite-info:hover {
+  border-color: #a4b1cf;
+}
+
+.test-result,
+.suite-consolelog,
+.suite-obsolete-snapshots {
+  border-radius: 8px;
+}
+
+.failureMessages {
+  border-top-color: #ff6f80;
+}
+
+.failureMsg {
+  color: #ffd5dd;
+}
+
+#coverage-summary-panel {
+  margin: 0 0 1.5rem;
+  padding: 1rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+#coverage-summary-panel h2 {
+  margin: 0 0 0.8rem;
+  font-size: 1.1rem;
+}
+
+#coverage-summary-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#coverage-summary-table th,
+#coverage-summary-table td {
+  padding: 0.55rem 0.65rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(164, 177, 207, 0.2);
+}
+
+#coverage-summary-table th {
+  color: #dbe5fb;
+  font-weight: 600;
+}
+
+#coverage-summary-table td {
+  color: var(--text-primary);
+}
+
+#coverage-details-panel {
+  margin: 0 0 1.5rem;
+  padding: 1rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+#coverage-details-panel h2 {
+  margin: 0 0 0.8rem;
+  font-size: 1.1rem;
+}
+
+#coverage-details-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 0.92rem;
+}
+
+#coverage-details-table th,
+#coverage-details-table td {
+  padding: 0.45rem 0.55rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(164, 177, 207, 0.18);
+  vertical-align: top;
+}
+
+#coverage-details-table td:last-child,
+#coverage-details-table th:last-child {
+  word-break: break-word;
+}
+
+.coverage-total-row td:first-child,
+.coverage-folder-row td:first-child {
+  font-weight: 700;
+}
+
+.coverage-file-row td:first-child {
+  padding-left: 1.3rem;
+  color: #dbe5fb;
+}
+
+.coverage-good {
+  color: #8ef0bc !important;
+}
+
+.coverage-warn {
+  color: #ffd27d !important;
+}
+
+.coverage-bad {
+  color: #ff9aa8 !important;
+}
