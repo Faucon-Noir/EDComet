@@ -31,6 +31,10 @@ function getLinuxSteamPaths(homeDir: string): string[] {
  * @returns A string containing the path to ED Journal files
  */
 export function getLogsPath(): string | null {
+	if (process.env.ED_JOURNAL_PATH) {
+		return process.env.ED_JOURNAL_PATH;
+	}
+
 	const homeDir = os.homedir();
 	const windowsPath = path.join(
 		homeDir,

@@ -1,0 +1,3 @@
+{ "timestamp":"2024-01-01T00:00:00Z", "event":"Fileheader", "part":1, "language":"English/UK", "Odyssey":true, "gameversion":"4.0.0.0", "build":"r0/r0 " }
+{ "timestamp":"2024-01-01T00:00:05Z", "event":"Commander", "FID":"F0000000", "Name":"CMDR Fixture" }
+{ "timestamp":"2024-01-01T00:00:10Z", "event":"Loadout", "Ship":"type9_military", "ShipName":"FIXTURE HAULER", "ShipIdent":"CI-001", "HullValue":100000, "ModulesValue":50000, "UnladenMass":700, "CargoCapacity":400, "MaxJumpRange":10, "FuelCapacity":{ "Main":8, "Reserve":1 }, "Modules":[] }

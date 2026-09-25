@@ -243,3 +243,5 @@ openapitools.json
 
 # Reserved docs & notes
 **/notes/
+
+!backend/tests/fixtures/journal/Journal*.log

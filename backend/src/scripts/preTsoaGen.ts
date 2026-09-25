@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 const apiUrl: string = process.env.API_URL || '';
-const apiPrefix: string = process.env.API_PREFIX||'';
+const apiPrefix: string = process.env.API_PREFIX || 'api';
 
 const tsoaConfig = {
 	entryFile: "src/index.ts",

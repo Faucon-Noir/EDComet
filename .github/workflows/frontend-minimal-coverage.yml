@@ -10,6 +10,9 @@ jobs:
   frontend:
     name: Frontend tests and build
     runs-on: ubuntu-latest
+    env:
+      API_URL: localhost:8000
+      API_PREFIX: api
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -25,8 +28,20 @@ jobs:
           node-version: 22
           cache: pnpm
 
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Generate backend API spec
+        run: pnpm --filter ed-comet-backend run tsoa:gen:backend
+
+      - name: Generate frontend API client
+        run: pnpm --filter ed-comet run client:gen
 
       - name: Run frontend tests
         run: pnpm --filter ed-comet run test:report

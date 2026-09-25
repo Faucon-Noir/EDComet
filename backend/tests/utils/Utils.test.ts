@@ -16,9 +16,12 @@ describe("utils", () => {
   afterEach(() => {
     jest.restoreAllMocks();
     mockedGetFileHeader.mockReset();
+    delete process.env.ED_JOURNAL_PATH;
   });
 
   it("returns journal path when it exists", () => {
+    const platform = Object.getOwnPropertyDescriptor(process, "platform");
+    Object.defineProperty(process, "platform", { value: "win32" });
     jest.spyOn(os, "homedir").mockReturnValue("C:/Users/test");
     jest.spyOn(fs, "existsSync").mockImplementation((inputPath) =>
       String(inputPath).includes(path.join("Saved Games", "Frontier Developments", "Elite Dangerous")),
@@ -26,6 +29,18 @@ describe("utils", () => {
 
     const result = getLogsPath();
     expect(result).toContain(path.join("Saved Games", "Frontier Developments", "Elite Dangerous"));
+
+    Object.defineProperty(process, "platform", platform!);
+  });
+
+  it("returns the ED_JOURNAL_PATH fixture directory when set, emulating a real journal folder", () => {
+    const fixturePath = path.join(__dirname, "..", "fixtures", "journal");
+    process.env.ED_JOURNAL_PATH = fixturePath;
+
+    expect(getLogsPath()).toBe(fixturePath);
+    expect(fs.existsSync(fixturePath)).toBe(true);
+
+    delete process.env.ED_JOURNAL_PATH;
   });
 
   it("returns null when no journal path exists", () => {
@@ -81,6 +96,11 @@ describe("utils", () => {
 
   it("falls back to en when language field is missing", () => {
     mockedGetFileHeader.mockReturnValue({} as any);
+    expect(getLanguage()).toBe("en");
+  });
+
+  it("falls back to en when no file header is found", () => {
+    mockedGetFileHeader.mockReturnValue(null);
     expect(getLanguage()).toBe("en");
   });
 

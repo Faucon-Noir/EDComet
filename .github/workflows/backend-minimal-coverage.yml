@@ -10,6 +10,9 @@ jobs:
   backend:
     name: Backend tests and coverage
     runs-on: ubuntu-latest
+    env:
+      API_URL: localhost:8000
+      API_PREFIX: api
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
