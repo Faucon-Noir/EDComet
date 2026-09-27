@@ -1,10 +1,11 @@
 import { Route, Routes } from "react-router-dom";
 import HomePage from "./Home";
 import Layout from "./Layout";
-import { Construction, Home, Ship } from "./paths";
+import { Construction, Home, Ship, Stats } from "./paths";
 import ErrorComponent from "../components/error";
 import ShipPage from "./Ship";
 import ConstructionPage from "./Construction";
+import StatsPage from "./Stats";
 
 const Pages = () => {
   return (
@@ -15,6 +16,7 @@ const Pages = () => {
         <Route path={Construction} element={<ConstructionPage />} />
         <Route path={Home} element={<HomePage />} />
         <Route path={Ship} element={<ShipPage />} />
+        <Route path={Stats} element={<StatsPage />} />
         {/* <Route path={Test} element={<TestPage />} /> */}
       </Route>
     </Routes>

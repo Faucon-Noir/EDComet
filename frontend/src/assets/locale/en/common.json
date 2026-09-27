@@ -5,6 +5,7 @@
     "home": "Home",
     "ship": "Ship",
     "test": "Test",
+    "stats": "Statistics",
     "sse": {
       "connecting": "Live updates connecting",
       "connected": "Live updates connected",

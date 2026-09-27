@@ -45,5 +45,38 @@
   },
   "test": {
     "title": "Test Page"
+  },
+  "stats": {
+    "title": "Commander statistics",
+    "loading": "Loading statistics",
+    "error": "Unable to load statistics.",
+    "emptyState": "No statistics available yet.",
+    "updated": "Updated: {{date}}",
+    "wealth": "Current wealth",
+    "systems": "Systems visited",
+    "jumps": "Hyperspace jumps",
+    "trades": "Markets visited",
+    "profits": "Profit distribution by activity",
+    "totalProfits": "Total",
+    "noProfits": "No profits to compare yet.",
+    "spending": "Spending breakdown",
+    "totalSpent": "Spent",
+    "noSpending": "No spending to compare yet.",
+    "spendingGroups": { "ships": "Ships", "operations": "Operations", "equipment": "Personal gear", "premium": "Premium stock" },
+    "spendingItems": {
+      "ships": "Ships", "outfitting": "Outfitting", "repairs": "Repairs",
+      "fuel": "Fuel", "ammo": "Ammo and consumables", "insurance": "Insurance",
+      "suits": "Suits", "weapons": "Weapons", "consumables": "Suit consumables", "premium": "Premium stock"
+    },
+    "details": "All statistics",
+    "categories": {
+      "Bank_Account": "Bank account", "Combat": "Combat", "Crime": "Crime",
+      "Smuggling": "Smuggling", "Trading": "Trading", "Mining": "Mining",
+      "Exploration": "Exploration", "Passenger": "Passengers", "Search_And_Rescue": "Search and rescue",
+      "Crafting": "Crafting", "Crew": "Crew", "Multicrew": "Multicrew",
+      "Material_Trader_Stats": "Material trading", "FLEETCARRIER": "Fleet carrier",
+      "Exobiology": "Exobiology", "TG_ENCOUNTERS": "Thargoid encounters",
+      "CQC": "CQC", "Squadron": "Squadron"
+    }
   }
 }

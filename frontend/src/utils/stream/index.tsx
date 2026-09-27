@@ -18,12 +18,7 @@ const JournalStreamContext = createContext<JournalStreamContextValue | null>(
   null,
 );
 
-const supportedEventTypes: EventEnum[] = [
-  EventEnum.Loadout,
-  EventEnum.ColonisationConstructionDepot,
-  EventEnum.FileHeader,
-  EventEnum.MarketBuy,
-];
+const supportedEventTypes = new Set(Object.values(EventEnum));
 
 export function JournalStreamProvider({
   children,
@@ -48,8 +43,7 @@ export function JournalStreamProvider({
 
         // Filter for supported event types
         const validEvents = (payload.events ?? []).filter(
-          (event): event is EventEnum =>
-            supportedEventTypes.includes(event as EventEnum),
+          (event) => supportedEventTypes.has(event),
         );
 
         if (validEvents.length === 0) {
