@@ -5,6 +5,7 @@
     "home": "Accueil",
     "ship": "Vaisseau",
     "test": "Test",
+    "stats": "Statistiques",
     "sse": {
       "connecting": "Connexion aux lives updates",
       "connected": "Lives updates connectées",

@@ -3,15 +3,8 @@ import { EventEnum } from "ed-shared";
 import {
   onJournalFileChange,
   onJournalUpdate,
-  type JournalFileChangeEvent,
 } from "./LogInterpreterService";
-
-export interface JournalSseMessage {
-  id: string;
-  events: EventEnum[];
-  files?: JournalFileChangeEvent[];
-  timestamp: string;
-}
+import { JournalFileChangeEvent, JournalSseMessage } from "../utils/type";
 
 class JournalSseService {
   private clients = new Set<PassThrough>();

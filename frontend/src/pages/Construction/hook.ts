@@ -19,6 +19,7 @@ import {
   OTHER_CATEGORY_KEY,
   OTHER_CATEGORY_LABEL,
 } from "./type";
+import { EventEnum } from "ed-shared";
 
 interface UseConstructionPageResult {
   categorizedResources: CategorizedResourceGroup[];
@@ -351,19 +352,21 @@ export const useConstructionPage = (): UseConstructionPageResult => {
       setData(nextData);
       setStats(statsResponse.data ?? undefined);
       syncCategoryMap(marketResponse.data, nextResources);
+    }).catch((error) => {
+      console.error("Failed to load construction data:", error);
     });
   };
 
   useEffect(() => {
-    loadConstructionData();
+    void loadConstructionData();
   }, []);
 
   useEffect(() => {
     const hasDepotEvent = lastEvent?.events.some(
-      (eventName) => eventName === "ColonisationConstructionDepot",
+      (eventName) => eventName === EventEnum.ColonisationConstructionDepot,
     );
     const hasMarketBuyEvent = lastEvent?.events.some(
-      (eventName) => eventName === "MarketBuy",
+      (eventName) => eventName === EventEnum.MarketBuy,
     );
     const hasJournalSwitch = lastEvent?.files?.some(
       (file) => file.type === "journal-switched",

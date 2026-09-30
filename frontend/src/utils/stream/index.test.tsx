@@ -42,7 +42,12 @@ class TestEventSource {
 
 function StreamState() {
   const { lastEvent, status } = useJournalStream();
-  return <output>{`${status}:${lastEvent?.id ?? 'none'}`}</output>;
+  return (
+    <>
+      <output>{`${status}:${lastEvent?.id ?? 'none'}`}</output>
+      <output data-testid="event-types">{lastEvent?.events.join(',') ?? ''}</output>
+    </>
+  );
 }
 
 describe('JournalStreamProvider', () => {
@@ -83,7 +88,7 @@ describe('JournalStreamProvider', () => {
     );
   });
 
-  it('ignores journal events that are not supported by the application', async () => {
+  it('forwards every event defined in EventEnum', async () => {
     render(
       <JournalStreamProvider>
         <StreamState />
@@ -92,11 +97,16 @@ describe('JournalStreamProvider', () => {
 
     await waitFor(() => expect(TestEventSource.instances).toHaveLength(1));
     TestEventSource.instances[0].emitJournalUpdate({
-      id: 'unsupported-event',
-      events: [EventEnum.MarketSell],
+      id: 'all-events',
+      events: Object.values(EventEnum),
     });
 
-    expect(screen.getByText('connecting:none')).toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.getByText('connected:all-events')).toBeInTheDocument(),
+    );
+    expect(screen.getByTestId('event-types')).toHaveTextContent(
+      Object.values(EventEnum).join(','),
+    );
   });
 
   it('reports a disconnected status when the stream URL cannot be created', async () => {

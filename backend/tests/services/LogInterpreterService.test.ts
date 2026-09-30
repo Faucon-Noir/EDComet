@@ -63,7 +63,8 @@ describe("LogInterpreterService", () => {
       };
     });
 
-    const mod = require("../../src/services/LogInterpreterService") as TestModule;
+    const mod =
+      require("../../src/services/LogInterpreterService") as TestModule;
     return { mod, watcher };
   }
 
@@ -89,58 +90,54 @@ describe("LogInterpreterService", () => {
     expect(() => mod.getLatestLogFile()).toThrow("No journal log file found");
   });
 
-  it("returns latest loadout from journal content", () => {
-    const { mod } = loadService({
-      journalContent: [
-        "not-json",
-        JSON.stringify({ event: EventEnum.Loadout, Ship: "CobraMkIII", CargoCapacity: 32 }),
-        JSON.stringify({ event: EventEnum.Loadout, Ship: "Type9", CargoCapacity: 700 }),
-      ].join("\n"),
-    });
+  it("stores and returns cached journal state", () => {
+    const { mod } = loadService();
+    const loadout = { event: EventEnum.Loadout, Ship: "Python" } as any;
+    const depot = {
+      event: EventEnum.ColonisationConstructionDepot,
+      MarketID: 42,
+    } as any;
+    const header = { event: EventEnum.FileHeader, gameversion: "4.0" } as any;
+    const commander = { Name: "CMDR Test" } as any;
+    const market = { event: EventEnum.Market, Items: [] } as any;
+    const stats = { event: EventEnum.Stats } as any;
 
-    expect(mod.getLoadout()).toEqual(
-      expect.objectContaining({ Ship: "Type9", CargoCapacity: 700 }),
-    );
-  });
+    mod.setLatestLoadout(loadout);
+    mod.setLatestDepot(depot);
+    mod.setLatestFileHeader(header);
+    mod.setLatestCommander(commander);
+    mod.setLatestMarket(market);
+    mod.setLatestStats(stats);
 
-  it("returns null when the journal contains no loadout", () => {
-    const { mod } = loadService({
-      journalContent: JSON.stringify({ event: EventEnum.MarketBuy, TotalCost: 50 }),
-    });
-
-    expect(mod.getLoadout()).toBeNull();
-  });
-
-  it("returns latest construction depot from journal content", () => {
-    const { mod } = loadService({
-      journalContent: [
-        JSON.stringify({ event: EventEnum.ColonisationConstructionDepot, MarketID: 1, ConstructionProgress: 0.1 }),
-        JSON.stringify({ event: EventEnum.ColonisationConstructionDepot, MarketID: 2, ConstructionProgress: 0.4 }),
-      ].join("\n"),
-    });
-
-    expect(mod.getLatestConstructionDepot()).toEqual(
-      expect.objectContaining({ MarketID: 2, ConstructionProgress: 0.4 }),
-    );
-  });
-
-  it("returns null for absent or malformed construction depot events", () => {
-    const { mod } = loadService({ journalContent: "invalid-json" });
-    expect(mod.getLatestConstructionDepot()).toBeNull();
+    expect(mod.getLatestLoadout()).toBe(loadout);
+    expect(mod.getLatestDepot()).toBe(depot);
+    expect(mod.getFileHeader()).toBe(header);
+    expect(mod.getLatestCommander()).toBe(commander);
+    expect(mod.getLatestMarketState()).toBe(market);
+    expect(mod.getLatestStatsState()).toBe(stats);
   });
 
   it("returns latest file header and commander", () => {
     const { mod } = loadService({
       journalContent: [
-        JSON.stringify({ event: EventEnum.FileHeader, gameversion: "4.0", language: "French/FR" }),
-        JSON.stringify({ event: EventEnum.Commander, commander: { Name: "CMDR Test" } }),
+        JSON.stringify({
+          event: EventEnum.FileHeader,
+          gameversion: "4.0",
+          language: "French/FR",
+        }),
+        JSON.stringify({
+          event: EventEnum.Commander,
+          commander: { Name: "CMDR Test" },
+        }),
       ].join("\n"),
     });
 
     expect(mod.getFileHeader()).toEqual(
       expect.objectContaining({ gameversion: "4.0", language: "French/FR" }),
     );
-    expect(mod.getLatestCommander()).toEqual(expect.objectContaining({ Name: "CMDR Test" }));
+    expect(mod.getLatestCommander()).toEqual(
+      expect.objectContaining({ Name: "CMDR Test" }),
+    );
   });
 
   it("returns null for absent or malformed file header and commander events", () => {
@@ -150,80 +147,26 @@ describe("LogInterpreterService", () => {
     expect(mod.getLatestCommander()).toBeNull();
   });
 
-  it("returns latest market when Market.json is valid", () => {
-    const { mod } = loadService({
-      marketExists: true,
-      marketContent: JSON.stringify({
-        event: EventEnum.Market,
-        MarketID: 7,
-        StationName: "Jameson",
-        StationType: "Orbis",
-        StarSystem: "Shinrarta Dezhra",
-        Items: [],
-      }),
-    });
-
-    expect(mod.getLatestMarket()).toEqual(expect.objectContaining({ MarketID: 7 }));
-  });
-
-  it("returns null for invalid market payload", () => {
-    const { mod } = loadService({
-      marketExists: true,
-      marketContent: JSON.stringify({ event: EventEnum.Loadout, Items: [] }),
-    });
-
-    expect(mod.getLatestMarket()).toBeNull();
-  });
-
-  it("returns null when Market.json is missing or malformed", () => {
-    const missingMarket = loadService({ marketExists: false });
-    expect(missingMarket.mod.getLatestMarket()).toBeNull();
-
-    const malformedMarket = loadService({
-      marketExists: true,
-      marketContent: "invalid-json",
-    });
-    expect(malformedMarket.mod.getLatestMarket()).toBeNull();
-  });
-
-  it("returns all market buy events from journal", () => {
-    const { mod } = loadService({
-      journalContent: [
-        JSON.stringify({ event: EventEnum.MarketBuy, TotalCost: 100 }),
-        JSON.stringify({ event: EventEnum.Loadout }),
-        JSON.stringify({ event: EventEnum.MarketBuy, TotalCost: 20 }),
-      ].join("\n"),
-    });
-
-    const buys = mod.getMarketBuys();
-    expect(buys).toHaveLength(2);
-    expect(buys[0]).toEqual(expect.objectContaining({ TotalCost: 100 }));
-    expect(buys[1]).toEqual(expect.objectContaining({ TotalCost: 20 }));
-  });
-
-  it("skips malformed MarketBuy journal lines", () => {
-    const { mod } = loadService({
-      journalContent: [
-        "invalid-json",
-        JSON.stringify({ event: EventEnum.MarketBuy, TotalCost: 20 }),
-      ].join("\n"),
-    });
-
-    expect(mod.getMarketBuys()).toEqual([
-      expect.objectContaining({ TotalCost: 20 }),
-    ]);
-  });
-
   it("emits batched journal update from watcher line event", () => {
     const { mod, watcher } = loadService();
     const callback = jest.fn();
     mod.onJournalUpdate(callback);
 
-    watcher.emit("line", JSON.stringify({ event: EventEnum.Loadout, Ship: "Asp", CargoCapacity: 64 }));
+    watcher.emit(
+      "line",
+      JSON.stringify({
+        event: EventEnum.Loadout,
+        Ship: "Asp",
+        CargoCapacity: 64,
+      }),
+    );
     jest.advanceTimersByTime(550);
 
     expect(callback).toHaveBeenCalledTimes(1);
-    const [events, changes] = callback.mock.calls[0] as [EventEnum[], Record<EventEnum, string>];
+    const [events, changes] = callback.mock.calls[0] as [
+      EventEnum[],
+      Record<EventEnum, string>,
+    ];
     expect(events).toContain(EventEnum.Loadout);
     expect(changes[EventEnum.Loadout]).toContain("Ship: Asp");
   });
@@ -233,36 +176,102 @@ describe("LogInterpreterService", () => {
     const callback = jest.fn();
     mod.onJournalUpdate(callback);
 
-    watcher.emit("line", JSON.stringify({
-      event: EventEnum.ColonisationConstructionDepot,
-      ConstructionProgress: 0.25,
-      ResourcesRequired: [{ Name: "Steel" }],
-    }));
-    watcher.emit("line", JSON.stringify({
-      event: EventEnum.FileHeader,
-      gameversion: "4.1",
-      language: "English/UK",
-    }));
+    watcher.emit(
+      "line",
+      JSON.stringify({
+        event: EventEnum.ColonisationConstructionDepot,
+        ConstructionProgress: 0.25,
+        ResourcesRequired: [{ Name: "Steel" }],
+      }),
+    );
+    watcher.emit(
+      "line",
+      JSON.stringify({
+        event: EventEnum.FileHeader,
+        gameversion: "4.1",
+        language: "English/UK",
+      }),
+    );
+    watcher.emit(
+      "line",
+      JSON.stringify({
+        event: EventEnum.Commander,
+        commander: { Name: "CMDR Test" },
+      }),
+    );
+    watcher.emit(
+      "line",
+      JSON.stringify({
+        event: EventEnum.Market,
+        Items: [],
+      }),
+    );
+    watcher.emit(
+      "line",
+      JSON.stringify({
+        event: EventEnum.Stats,
+        Bank_Account: { Current_Wealth: 12345 },
+      }),
+    );
     watcher.emit("line", JSON.stringify({ event: EventEnum.MarketBuy }));
+    watcher.emit("line", "null");
+    watcher.emit("line", "[]");
+    watcher.emit("line", "{}");
+    watcher.emit("line", JSON.stringify({ event: EventEnum.Commander }));
+    watcher.emit("line", JSON.stringify({ event: EventEnum.Market }));
     jest.advanceTimersByTime(550);
 
-    const [events, changes] = callback.mock.calls[0] as [EventEnum[], Record<EventEnum, string>];
-    expect(events).toEqual(expect.arrayContaining([
-      EventEnum.ColonisationConstructionDepot,
-      EventEnum.FileHeader,
-      EventEnum.MarketBuy,
-    ]));
-    expect(changes[EventEnum.ColonisationConstructionDepot]).toBe("Progress: 25.0% (1 resources)");
-    expect(changes[EventEnum.FileHeader]).toBe("Version: 4.1 - Language: English/UK");
+    const [events, changes] = callback.mock.calls[0] as [
+      EventEnum[],
+      Record<EventEnum, string>,
+    ];
+    expect(events).toEqual(
+      expect.arrayContaining([
+        EventEnum.ColonisationConstructionDepot,
+        EventEnum.FileHeader,
+        EventEnum.Commander,
+        EventEnum.Market,
+        EventEnum.Stats,
+        EventEnum.MarketBuy,
+      ]),
+    );
+    expect(changes[EventEnum.ColonisationConstructionDepot]).toBe(
+      "Progress: 25.0% (1 resources)",
+    );
+    expect(changes[EventEnum.FileHeader]).toBe(
+      "Version: 4.1 - Language: English/UK",
+    );
+    expect(changes[EventEnum.Commander]).toBe("Unknown change");
+    expect(changes[EventEnum.Market]).toBe("Unknown change");
+    expect(changes[EventEnum.Stats]).toBe("Wealth: 12345");
     expect(changes[EventEnum.MarketBuy]).toBe("Unknown change");
-    expect(mod.getLatestConstructionDepot()).toEqual(expect.objectContaining({ ConstructionProgress: 0.25 }));
-    expect(mod.getFileHeader()).toEqual(expect.objectContaining({ gameversion: "4.1" }));
+    expect(mod.getLatestDepot()).toEqual(
+      expect.objectContaining({ ConstructionProgress: 0.25 }),
+    );
+    expect(mod.getFileHeader()).toEqual(
+      expect.objectContaining({ gameversion: "4.1" }),
+    );
+    expect(mod.getLatestCommander()).toEqual(
+      expect.objectContaining({ Name: "CMDR Test" }),
+    );
+    expect(mod.getLatestMarketState()).toEqual(
+      expect.objectContaining({ Items: [] }),
+    );
+    expect(mod.getLatestStatsState()).toEqual(
+      expect.objectContaining({
+        Bank_Account: { Current_Wealth: 12345 },
+      }),
+    );
   });
 
   it("refreshes cached state when the watcher switches journals", () => {
     const { mod, watcher } = loadService({
       journalContent: [
-        JSON.stringify({ event: EventEnum.Loadout, Ship: "Python", CargoCapacity: 192 }),
+        JSON.stringify({
+          event: EventEnum.Loadout,
+          Ship: "Python",
+          CargoCapacity: 192,
+        }),
         "invalid-json",
       ].join("\n"),
     });
@@ -277,7 +286,9 @@ describe("LogInterpreterService", () => {
     });
     jest.advanceTimersByTime(550);
 
-    expect(mod.getLoadout()).toEqual(expect.objectContaining({ Ship: "Python" }));
+    expect(mod.getLatestLoadout()).toEqual(
+      expect.objectContaining({ Ship: "Python" }),
+    );
     expect(callback).toHaveBeenCalledWith([
       expect.objectContaining({ type: "journal-switched", change: "created" }),
     ]);
@@ -305,12 +316,11 @@ describe("LogInterpreterService", () => {
   });
 
   it("invalidates cached market after Market.json update", () => {
-    const { mod, watcher } = loadService({
-      marketExists: true,
-      marketContent: JSON.stringify({ event: EventEnum.Market, MarketID: 7, Items: [] }),
-    });
+    const { mod, watcher } = loadService();
+    const market = { event: EventEnum.Market, MarketID: 7, Items: [] } as any;
+    mod.setLatestMarket(market);
 
-    expect(mod.getLatestMarket()).toEqual(expect.objectContaining({ MarketID: 7 }));
+    expect(mod.getLatestMarketState()).toBe(market);
     watcher.emit("file-change", {
       type: "support-file",
       fileName: "Market.json",
@@ -319,7 +329,7 @@ describe("LogInterpreterService", () => {
     });
     jest.advanceTimersByTime(550);
 
-    expect(mod.getLatestMarket()).toEqual(expect.objectContaining({ MarketID: 7 }));
+    expect(mod.getLatestMarketState()).toBeNull();
   });
 
   it("ignores malformed watcher line payloads without notifying subscribers", () => {
@@ -355,8 +365,13 @@ describe("LogInterpreterService", () => {
     jest.advanceTimersByTime(550);
 
     expect(callback).toHaveBeenCalledTimes(1);
-    const batched = callback.mock.calls[0][0] as Array<{ change: string; fileName: string }>;
+    const batched = callback.mock.calls[0][0] as Array<{
+      change: string;
+      fileName: string;
+    }>;
     expect(batched).toHaveLength(1);
-    expect(batched[0]).toEqual(expect.objectContaining({ fileName: "Market.json", change: "updated" }));
+    expect(batched[0]).toEqual(
+      expect.objectContaining({ fileName: "Market.json", change: "updated" }),
+    );
   });
 });

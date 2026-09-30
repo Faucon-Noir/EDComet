@@ -4,3 +4,4 @@ export * from './enum';
 export * from './fileHeader.type';
 export * from './ship.type';
 export * from './market.type';
+export * from './stats.type';

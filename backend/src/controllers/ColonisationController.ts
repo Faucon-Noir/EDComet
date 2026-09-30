@@ -1,11 +1,12 @@
 import { Get, Route, Tags } from "tsoa";
-import { getLatestConstructionDepot, getLatestMarket } from "../services/LogInterpreterService";
+import { getLatestConstructionDepot } from "../services/ColonisationService";
+import { getLatestMarket } from "../services/MarketService";
 import {
 	ColonisationConstructionDepot,
 	ColonisationStats,
 	Market,
 } from "ed-shared";
-import { calculateLatestSiteStats } from "../services/MarketService";
+import { calculateLatestSiteStats } from "../services/StatsService";
 
 @Route("construction")
 @Tags("Construction")

@@ -45,5 +45,38 @@
   },
   "test": {
     "title": "Page de Test"
+  },
+  "stats": {
+    "title": "Statistiques du commandant",
+    "loading": "Chargement des statistiques",
+    "error": "Impossible de charger les statistiques.",
+    "emptyState": "Aucune statistique disponible pour le moment.",
+    "updated": "Mise à jour : {{date}}",
+    "wealth": "Fortune actuelle",
+    "systems": "Systèmes visités",
+    "jumps": "Sauts hyperspatiaux",
+    "trades": "Marchés visités",
+    "profits": "Répartition des bénéfices par activité",
+    "totalProfits": "Total",
+    "noProfits": "Aucun bénéfice à répartir.",
+    "spending": "Répartition des dépenses",
+    "totalSpent": "Dépenses",
+    "noSpending": "Aucune dépense à répartir.",
+    "spendingGroups": { "ships": "Vaisseaux", "operations": "Entretien et opérations", "equipment": "Équipement personnel", "premium": "Stock premium" },
+    "spendingItems": {
+      "ships": "Achat de vaisseaux", "outfitting": "Équipement des vaisseaux", "repairs": "Réparations",
+      "fuel": "Carburant", "ammo": "Munitions et consommables", "insurance": "Assurance",
+      "suits": "Combinaisons", "weapons": "Armes", "consumables": "Consommables de combinaison", "premium": "Stock premium"
+    },
+    "details": "Toutes les statistiques",
+    "categories": {
+      "Bank_Account": "Compte bancaire", "Combat": "Combat", "Crime": "Criminalité",
+      "Smuggling": "Contrebande", "Trading": "Commerce", "Mining": "Extraction",
+      "Exploration": "Exploration", "Passenger": "Passagers", "Search_And_Rescue": "Recherche et sauvetage",
+      "Crafting": "Fabrication", "Crew": "Équipage", "Multicrew": "Multicrew",
+      "Material_Trader_Stats": "Échange de matériaux", "FLEETCARRIER": "Porte-vaisseaux",
+      "Exobiology": "Exobiologie", "TG_ENCOUNTERS": "Rencontres thargoïdes",
+      "CQC": "CQC", "Squadron": "Escadron"
+    }
   }
 }

@@ -4,7 +4,7 @@ const theme = createTheme({
 		text: {
 			primary: "#FFFFFFDE",
 			secondary: "#FFFFFFDE",
-			disabled: "#FFFFFFDE",
+			disabled: "#ffffff7c",
 		},
 		primary: {
 			// main: "#021027",
@@ -37,7 +37,7 @@ const theme = createTheme({
 					WebkitFontSmoothing: "antialiased",
 					MozOsxFontSmoothing: "grayscale",
 					// background: "radial-gradient(#021027, #000000)",
-					background: "radial-gradient(#05265b, #000000)",
+					background: "radial-gradient(#05265b, #000)!important",
 				},
 				body: {
 					margin: 0,
@@ -47,7 +47,14 @@ const theme = createTheme({
 					minHeight: "100vh",
 					fontFamily: "'SansationLight', sans-serif !important",
 					// background: "radial-gradient(#021027, #000)",
-					background: "radial-gradient(#05265b, #000000)",
+					background: "radial-gradient(#05265b, #000)!important",
+				},
+				MuiCharts:{
+
+				},
+				".MuiChartsTooltip-paper": {
+					backgroundColor: "transparent !important",
+					border: "none !important"
 				},
 				input: {
 					border: "1px solid #fff",

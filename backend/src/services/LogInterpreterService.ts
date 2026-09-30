@@ -10,24 +10,16 @@ import {
   getErrorMessage,
   CommanderType,
   Market,
-  MarketBuy,
+  Stats,
 } from "ed-shared";
+import { EventChangeMap, JournalFileChangeEvent } from "../utils/type";
 
 let latestLoadout: ShipLoadout | null = null;
 let latestDepot: ColonisationConstructionDepot | null = null;
 let latestFileHeader: FileHeader | null = null;
 let latestCommander: CommanderType | null = null;
 let latestMarket: Market | null = null;
-
-// SSE batching: accumulate changes over 1 second
-export type EventChangeMap = Record<EventEnum, string>;
-
-export interface JournalFileChangeEvent {
-  fileName: string;
-  filePath: string;
-  change: "created" | "updated";
-  type: "journal-switched" | "support-file";
-}
+let latestStats: Stats | null = null;
 
 const pendingEvents = new Set<EventEnum>();
 const pendingChanges = new Map<EventEnum, string>();
@@ -85,6 +77,18 @@ function cacheRelevantEvent(event: unknown): void {
     latestFileHeader = event as FileHeader;
     recordEventChange(EventEnum.FileHeader);
   }
+  if (event.event === EventEnum.Commander && "commander" in event) {
+    latestCommander = event.commander as CommanderType;
+    recordEventChange(EventEnum.Commander);
+  }
+  if (event.event === EventEnum.Market && "Items" in event) {
+    latestMarket = event as Market;
+    recordEventChange(EventEnum.Market);
+  }
+  if (event.event === EventEnum.Stats) {
+    latestStats = event as Stats;
+    recordEventChange(EventEnum.Stats);
+  }
   if (event.event === EventEnum.MarketBuy) {
     recordEventChange(EventEnum.MarketBuy);
   }
@@ -94,6 +98,9 @@ function refreshStateFromJournal(logFile: string): void {
   latestLoadout = null;
   latestDepot = null;
   latestFileHeader = null;
+  latestCommander = null;
+  latestMarket = null;
+  latestStats = null;
 
   for (const line of readJournalLines(logFile)) {
     try {
@@ -128,6 +135,10 @@ function generateFileHeaderSummary(fileHeader: FileHeader): string {
   return `Version: ${fileHeader.gameversion} - Language: ${fileHeader.language}`;
 }
 
+function generateStatsSummary(stats: Stats): string {
+  return `Wealth: ${stats.Bank_Account?.Current_Wealth ?? 0}`;
+}
+
 function recordEventChange(eventType: EventEnum): void {
   let summary = "Unknown change";
 
@@ -140,6 +151,8 @@ function recordEventChange(eventType: EventEnum): void {
     summary = generateDepotSummary(latestDepot);
   } else if (eventType === EventEnum.FileHeader && latestFileHeader) {
     summary = generateFileHeaderSummary(latestFileHeader);
+  } else if (eventType === EventEnum.Stats && latestStats) {
+    summary = generateStatsSummary(latestStats);
   }
 
   pendingEvents.add(eventType);
@@ -147,7 +160,47 @@ function recordEventChange(eventType: EventEnum): void {
   startBatchInterval();
 }
 
-function getCurrentJournalLines(): string[] {
+export function setLatestLoadout(loadout: ShipLoadout | null): void {
+  latestLoadout = loadout;
+}
+
+export function setLatestDepot(depot: ColonisationConstructionDepot | null): void {
+  latestDepot = depot;
+}
+
+export function setLatestFileHeader(fileHeader: FileHeader | null): void {
+  latestFileHeader = fileHeader;
+}
+
+export function setLatestCommander(commander: CommanderType | null): void {
+  latestCommander = commander;
+}
+
+export function setLatestMarket(market: Market | null): void {
+  latestMarket = market;
+}
+
+export function setLatestStats(stats: Stats | null): void {
+  latestStats = stats;
+}
+
+export function getLatestLoadout(): ShipLoadout | null {
+  return latestLoadout;
+}
+
+export function getLatestDepot(): ColonisationConstructionDepot | null {
+  return latestDepot;
+}
+
+export function getLatestMarketState(): Market | null {
+  return latestMarket;
+}
+
+export function getLatestStatsState(): Stats | null {
+  return latestStats;
+}
+
+export function getCurrentJournalLines(): string[] {
   const currentLogFile = getLatestLogFile();
   if (!currentLogFile) {
     return [];
@@ -169,8 +222,9 @@ watcher.on("file-change", (change: WatchedFileChange) => {
     refreshStateFromJournal(change.filePath);
   }
 
+  // Reset latestMarket if the Market.json support file changes
   if (change.type === "support-file" && change.fileName === "Market.json") {
-    latestMarket = null;
+    setLatestMarket(null);
   }
 
   recordFileChange(change);
@@ -200,74 +254,6 @@ export function getLatestLogFile(): string {
     return dateB.localeCompare(dateA); // décroissant
   });
   return path.join(logPaths, files[0]);
-}
-
-/**
- * A function to get the ShipLoadout
- * @returns A ShipLoadout object or null
- */
-export function getLoadout(): ShipLoadout | null {
-  if (latestLoadout != null) {
-    return latestLoadout;
-  }
-  let lastLoadout: ShipLoadout | null = null;
-  for (const line of getCurrentJournalLines()) {
-    try {
-      const event = JSON.parse(line);
-      if (event.event === EventEnum.Loadout) {
-        lastLoadout = event as ShipLoadout;
-      }
-    } catch (err: unknown) {
-      console.warn("🚧 Loadout Interpreter", getErrorMessage(err));
-    }
-  }
-  if (!lastLoadout) {
-    return null;
-  }
-  console.log(
-    "✅ Found Loadout event:",
-    lastLoadout.Ship,
-    lastLoadout.CargoCapacity,
-  );
-  return lastLoadout;
-}
-
-/**
- * A function to get the latest ConstructionDepot where the commander docked
- * @returns An object, either of type ColonisationConstructionDepot or null
- */
-export function getLatestConstructionDepot(): ColonisationConstructionDepot | null {
-  if (latestDepot != null) {
-    return latestDepot;
-  }
-  let lastDepot: ColonisationConstructionDepot | null = null;
-  try {
-    for (const line of getCurrentJournalLines()) {
-      try {
-        const event = JSON.parse(line);
-        if (event.event === EventEnum.ColonisationConstructionDepot) {
-          lastDepot = event as ColonisationConstructionDepot;
-        }
-      } catch (err: unknown) {
-        console.warn("🚧 Latest Construction foreach:", getErrorMessage(err));
-        continue;
-      }
-    }
-    if (!lastDepot) {
-      return null;
-    }
-    console.log(
-      "✅ Found ColonisationConstructionDepot event:",
-      lastDepot.MarketID,
-      lastDepot.ConstructionProgress * 100,
-      lastDepot.timestamp,
-    );
-  } catch (error: unknown) {
-    console.warn("🚧 Latest Construction Interpreter:", getErrorMessage(error));
-    return null;
-  }
-
-  return lastDepot;
 }
 
 /**
@@ -341,60 +327,6 @@ export function getLatestCommander(): CommanderType | null {
   return lastCommander;
 }
 
-/**
- * A function to get the latest Market.json support file content
- * @returns A Market object or null
- */
-export function getLatestMarket(): Market | null {
-  if (latestMarket != null) {
-    return latestMarket;
-  }
-
-  const logsPath = getLogsPath();
-  if (!logsPath) {
-    return null;
-  }
-
-  const marketPath = path.join(logsPath, "Market.json");
-  if (!fs.existsSync(marketPath)) {
-    return null;
-  }
-
-  try {
-    const rawContent = fs.readFileSync(marketPath, "utf8");
-    const market = JSON.parse(rawContent) as Market;
-
-    if (market.event !== EventEnum.Market || !Array.isArray(market.Items)) {
-      return null;
-    }
-
-    latestMarket = market;
-    return latestMarket;
-  } catch (error: unknown) {
-    console.warn("🚧 Latest Market Interpreter:", getErrorMessage(error));
-    return null;
-  }
-}
-
-/**
- * Returns every MarketBuy event from the active journal file.
- */
-export function getMarketBuys(): MarketBuy[] {
-  const marketBuys: MarketBuy[] = [];
-
-  for (const line of getCurrentJournalLines()) {
-    try {
-      const event = JSON.parse(line);
-      if (event.event === EventEnum.MarketBuy) {
-        marketBuys.push(event as MarketBuy);
-      }
-    } catch (error: unknown) {
-      console.warn("🚧 MarketBuy Interpreter:", getErrorMessage(error));
-    }
-  }
-
-  return marketBuys;
-}
 // #endregion
 
 // #region Event and File Change Subscription
