@@ -101,6 +101,12 @@ describe("LogInterpreterService", () => {
     const commander = { Name: "CMDR Test" } as any;
     const market = { event: EventEnum.Market, Items: [] } as any;
     const stats = { event: EventEnum.Stats } as any;
+    const missions = {
+      event: EventEnum.Missions,
+      Active: [],
+      Failed: [],
+      Complete: [],
+    } as any;
 
     mod.setLatestLoadout(loadout);
     mod.setLatestDepot(depot);
@@ -108,6 +114,7 @@ describe("LogInterpreterService", () => {
     mod.setLatestCommander(commander);
     mod.setLatestMarket(market);
     mod.setLatestStats(stats);
+    mod.setLatestMissions(missions);
 
     expect(mod.getLatestLoadout()).toBe(loadout);
     expect(mod.getLatestDepot()).toBe(depot);
@@ -115,6 +122,7 @@ describe("LogInterpreterService", () => {
     expect(mod.getLatestCommander()).toBe(commander);
     expect(mod.getLatestMarketState()).toBe(market);
     expect(mod.getLatestStatsState()).toBe(stats);
+    expect(mod.getLatestMissionsState()).toBe(missions);
   });
 
   it("returns latest file header and commander", () => {
@@ -214,6 +222,15 @@ describe("LogInterpreterService", () => {
       }),
     );
     watcher.emit("line", JSON.stringify({ event: EventEnum.MarketBuy }));
+    watcher.emit(
+      "line",
+      JSON.stringify({
+        event: EventEnum.Missions,
+        Active: [{ MissionID: 1 }],
+        Failed: [],
+        Complete: [],
+      }),
+    );
     watcher.emit("line", "null");
     watcher.emit("line", "[]");
     watcher.emit("line", "{}");
@@ -233,6 +250,7 @@ describe("LogInterpreterService", () => {
         EventEnum.Market,
         EventEnum.Stats,
         EventEnum.MarketBuy,
+        EventEnum.Missions,
       ]),
     );
     expect(changes[EventEnum.ColonisationConstructionDepot]).toBe(
@@ -245,6 +263,9 @@ describe("LogInterpreterService", () => {
     expect(changes[EventEnum.Market]).toBe("Unknown change");
     expect(changes[EventEnum.Stats]).toBe("Wealth: 12345");
     expect(changes[EventEnum.MarketBuy]).toBe("Unknown change");
+    expect(changes[EventEnum.Missions]).toBe(
+      "Active: 1 - Failed: 0 - Complete: 0",
+    );
     expect(mod.getLatestDepot()).toEqual(
       expect.objectContaining({ ConstructionProgress: 0.25 }),
     );
@@ -261,6 +282,9 @@ describe("LogInterpreterService", () => {
       expect.objectContaining({
         Bank_Account: { Current_Wealth: 12345 },
       }),
+    );
+    expect(mod.getLatestMissionsState()).toEqual(
+      expect.objectContaining({ Active: [{ MissionID: 1 }] }),
     );
   });
 

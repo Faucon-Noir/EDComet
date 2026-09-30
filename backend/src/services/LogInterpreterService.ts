@@ -10,6 +10,7 @@ import {
   getErrorMessage,
   CommanderType,
   Market,
+  Mission,
   Stats,
 } from "ed-shared";
 import { EventChangeMap, JournalFileChangeEvent } from "../utils/type";
@@ -20,6 +21,7 @@ let latestFileHeader: FileHeader | null = null;
 let latestCommander: CommanderType | null = null;
 let latestMarket: Market | null = null;
 let latestStats: Stats | null = null;
+let latestMissions: Mission | null = null;
 
 const pendingEvents = new Set<EventEnum>();
 const pendingChanges = new Map<EventEnum, string>();
@@ -92,6 +94,10 @@ function cacheRelevantEvent(event: unknown): void {
   if (event.event === EventEnum.MarketBuy) {
     recordEventChange(EventEnum.MarketBuy);
   }
+  if (event.event === EventEnum.Missions) {
+    latestMissions = event as Mission;
+    recordEventChange(EventEnum.Missions);
+  }
 }
 
 function refreshStateFromJournal(logFile: string): void {
@@ -101,6 +107,7 @@ function refreshStateFromJournal(logFile: string): void {
   latestCommander = null;
   latestMarket = null;
   latestStats = null;
+  latestMissions = null;
 
   for (const line of readJournalLines(logFile)) {
     try {
@@ -139,6 +146,10 @@ function generateStatsSummary(stats: Stats): string {
   return `Wealth: ${stats.Bank_Account?.Current_Wealth ?? 0}`;
 }
 
+function generateMissionsSummary(missions: Mission): string {
+  return `Active: ${missions.Active.length} - Failed: ${missions.Failed.length} - Complete: ${missions.Complete.length}`;
+}
+
 function recordEventChange(eventType: EventEnum): void {
   let summary = "Unknown change";
 
@@ -153,6 +164,8 @@ function recordEventChange(eventType: EventEnum): void {
     summary = generateFileHeaderSummary(latestFileHeader);
   } else if (eventType === EventEnum.Stats && latestStats) {
     summary = generateStatsSummary(latestStats);
+  } else if (eventType === EventEnum.Missions && latestMissions) {
+    summary = generateMissionsSummary(latestMissions);
   }
 
   pendingEvents.add(eventType);
@@ -184,6 +197,10 @@ export function setLatestStats(stats: Stats | null): void {
   latestStats = stats;
 }
 
+export function setLatestMissions(missions: Mission | null): void {
+  latestMissions = missions;
+}
+
 export function getLatestLoadout(): ShipLoadout | null {
   return latestLoadout;
 }
@@ -198,6 +215,10 @@ export function getLatestMarketState(): Market | null {
 
 export function getLatestStatsState(): Stats | null {
   return latestStats;
+}
+
+export function getLatestMissionsState(): Mission | null {
+  return latestMissions;
 }
 
 export function getCurrentJournalLines(): string[] {
@@ -229,6 +250,19 @@ watcher.on("file-change", (change: WatchedFileChange) => {
 
   recordFileChange(change);
 });
+
+/**
+ * Stops the background journal/support-file polling (used on graceful shutdown).
+ */
+export function stopWatching(): void {
+  if (typeof watcher.close === "function") {
+    watcher.close();
+  }
+  if (batchInterval) {
+    clearInterval(batchInterval);
+    batchInterval = null;
+  }
+}
 // #endregion
 
 // #region Getters functions for latest events and file header

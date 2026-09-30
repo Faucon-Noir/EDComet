@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import HomePage from "./Home";
 import Layout from "./Layout";
-import { Construction, Home, Ship, Stats } from "./paths";
+import { Construction, Home, Mission, Ship, Stats } from "./paths";
 import ErrorComponent from "../components/error";
 import ShipPage from "./Ship";
 import ConstructionPage from "./Construction";
