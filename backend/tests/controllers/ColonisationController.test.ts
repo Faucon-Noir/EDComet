@@ -1,19 +1,20 @@
 /// <reference types="jest" />
 
 import { ColonisationController } from "../../src/controllers/ColonisationController";
-import {
-  getLatestConstructionDepot,
-  getLatestMarket,
-} from "../../src/services/LogInterpreterService";
-import { calculateLatestSiteStats } from "../../src/services/MarketService";
+import { getLatestConstructionDepot } from "../../src/services/ColonisationService";
+import { getLatestMarket } from "../../src/services/MarketService";
+import { calculateLatestSiteStats } from "../../src/services/StatsService";
 import { EventEnum } from "ed-shared";
 
-jest.mock("../../src/services/LogInterpreterService", () => ({
+jest.mock("../../src/services/ColonisationService", () => ({
   getLatestConstructionDepot: jest.fn(),
-  getLatestMarket: jest.fn(),
 }));
 
 jest.mock("../../src/services/MarketService", () => ({
+  getLatestMarket: jest.fn(),
+}));
+
+jest.mock("../../src/services/StatsService", () => ({
   calculateLatestSiteStats: jest.fn(),
 }));
 

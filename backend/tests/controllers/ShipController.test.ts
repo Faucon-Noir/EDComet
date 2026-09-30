@@ -1,10 +1,10 @@
 /// <reference types="jest" />
 
 import { ShipController } from "../../src/controllers/ShipController";
-import { getLoadout } from "../../src/services/LogInterpreterService";
+import { getLoadout } from "../../src/services/ShipService";
 import { EventEnum } from "ed-shared";
 
-jest.mock("../../src/services/LogInterpreterService", () => ({
+jest.mock("../../src/services/ShipService", () => ({
   getLoadout: jest.fn(),
 }));
 

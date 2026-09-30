@@ -31,6 +31,10 @@ const sseHandlers = {
   }),
 };
 
+const statsHandlers = {
+  getLatestStats: jest.fn(async () => null),
+};
+
 jest.mock("../../src/controllers/HelloController", () => ({
   HelloController: class {
     public async getHello() { return helloHandlers.getHello(); }
@@ -64,6 +68,12 @@ jest.mock("../../src/controllers/SseController", () => ({
   },
 }));
 
+jest.mock("../../src/controllers/StatsController", () => ({
+  StatsController: class {
+    public async getLatestStats() { return statsHandlers.getLatestStats(); }
+  },
+}));
+
 import { RegisterRoutes } from "../../src/routes";
 
 describe("API failure modes", () => {
@@ -79,6 +89,7 @@ describe("API failure modes", () => {
     Object.values(shipHandlers).forEach((fn) => fn.mockReset());
     Object.values(constructionHandlers).forEach((fn) => fn.mockReset());
     Object.values(sseHandlers).forEach((fn) => fn.mockReset());
+    Object.values(statsHandlers).forEach((fn) => fn.mockReset());
 
     helloHandlers.getHello.mockResolvedValue({ message: "ok", lang: "en" });
     helloHandlers.getLanguage.mockResolvedValue("en");
@@ -92,6 +103,7 @@ describe("API failure modes", () => {
     constructionHandlers.getLatestSite.mockResolvedValue(null);
     constructionHandlers.getLatestSiteStats.mockResolvedValue(null);
     constructionHandlers.getLatestMarket.mockResolvedValue(null);
+    statsHandlers.getLatestStats.mockResolvedValue(null);
   });
 
   it("returns 404 on unknown route", async () => {
