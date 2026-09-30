@@ -3,13 +3,18 @@
 import { PassThrough } from "stream";
 import { EventEnum } from "ed-shared";
 
-type UpdateCallback = (events: EventEnum[], changes: Record<EventEnum, string>) => void;
-type FileCallback = (changes: Array<{
-  fileName: string;
-  filePath: string;
-  change: "created" | "updated";
-  type: "journal-switched" | "support-file";
-}>) => void;
+type UpdateCallback = (
+  events: EventEnum[],
+  changes: Record<EventEnum, string>,
+) => void;
+type FileCallback = (
+  changes: Array<{
+    fileName: string;
+    filePath: string;
+    change: "created" | "updated";
+    type: "journal-switched" | "support-file";
+  }>,
+) => void;
 
 describe("journalSseService", () => {
   const subscribedStreams: PassThrough[] = [];

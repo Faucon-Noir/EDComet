@@ -14,9 +14,8 @@ jest.mock("../../src/services/LogInterpreterService", () => ({
   setLatestLoadout: jest.fn(),
 }));
 
-const mockedGetCurrentJournalLines = getCurrentJournalLines as jest.MockedFunction<
-  typeof getCurrentJournalLines
->;
+const mockedGetCurrentJournalLines =
+  getCurrentJournalLines as jest.MockedFunction<typeof getCurrentJournalLines>;
 const mockedGetLatestLoadout = getLatestLoadout as jest.MockedFunction<
   typeof getLatestLoadout
 >;
