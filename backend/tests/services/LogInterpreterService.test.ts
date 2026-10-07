@@ -155,6 +155,44 @@ describe("LogInterpreterService", () => {
     expect(mod.getLatestCommander()).toBeNull();
   });
 
+  it("returns null when the journal cannot be read for file header and commander", () => {
+    const { mod } = loadService({ logsPath: null });
+    const warnSpy = jest.spyOn(console, "warn").mockImplementation();
+
+    expect(mod.getFileHeader()).toBeNull();
+    expect(mod.getLatestCommander()).toBeNull();
+    expect(warnSpy).toHaveBeenCalledWith(
+      "🚧 File Header Interpreter:",
+      expect.any(String),
+    );
+    expect(warnSpy).toHaveBeenCalledWith(
+      "🚧 Latest Commander Interpreter:",
+      expect.any(String),
+    );
+  });
+
+  it("stops the watcher and clears the batch interval", () => {
+    const { mod, watcher } = loadService();
+    const close = jest.fn();
+    (watcher as any).close = close;
+    const clearSpy = jest.spyOn(global, "clearInterval");
+    mod.onJournalUpdate(jest.fn());
+    watcher.emit("line", JSON.stringify({ event: EventEnum.MarketBuy }));
+
+    mod.stopWatching();
+
+    expect(close).toHaveBeenCalledTimes(1);
+    expect(clearSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("stops safely without a watcher close method or active interval", () => {
+    const { mod } = loadService();
+    const clearSpy = jest.spyOn(global, "clearInterval");
+
+    expect(() => mod.stopWatching()).not.toThrow();
+    expect(clearSpy).not.toHaveBeenCalled();
+  });
+
   it("emits batched journal update from watcher line event", () => {
     const { mod, watcher } = loadService();
     const callback = jest.fn();
