@@ -18,10 +18,7 @@ Le `package.json` racine contient aussi la configuration pnpm necessaire pour au
 
 ### 2. Migration des manifests backend et frontend
 
-Les champs `packageManager` ont ete remplaces pour pointer vers `pnpm@10.33.0` dans :
-
-- `backend/package.json`
-- `frontend/package.json`
+La version de pnpm n'est plus geree par Corepack : pnpm doit etre installe directement (voir la section "Installation de pnpm"). Aucun champ `packageManager` n'est declare dans les manifests.
 
 ### 3. Remplacement des appels Yarn dans les scripts
 
@@ -67,16 +64,22 @@ pnpm --dir ../frontend run client:gen
 
 L'avantage est d'eviter un `cd` implicite couple a Yarn, et de rendre l'intention plus explicite.
 
-### Node et Corepack
+### Installation de pnpm
 
-Sur les environnements qui n'ont pas pnpm installe globalement, il est recommande d'utiliser Corepack :
+Corepack n'est plus utilise pour gerer pnpm. Si Corepack etait active auparavant, desactivez d'abord ses shims pnpm pour eviter un conflit avec l'installation directe :
 
 ```bash
-corepack enable
-corepack prepare pnpm@10.33.0 --activate
+corepack disable pnpm
 ```
 
-Avec Node.js recent, Corepack est en general deja disponible.
+Installez ensuite pnpm 12.x directement et verifiez la version :
+
+```bash
+npm install -g pnpm@12.9.1
+pnpm --version
+```
+
+La version attendue est `12.9.1`. Aucun champ `packageManager` n'est necessaire dans le depot. Les workflows CI installent egalement cette version directement, sans Corepack.
 
 ### Scripts de build des dependances avec pnpm v10
 
@@ -115,13 +118,7 @@ Si vous venez d'une installation faite avant l'ajout de la configuration `pnpm.o
 pnpm rebuild
 ```
 
-Si pnpm n'est pas disponible :
-
-```bash
-corepack enable
-corepack prepare pnpm@10.33.0 --activate
-pnpm install
-```
+Si pnpm n'est pas disponible, voir la section "Installation de pnpm".
 
 ## Onboarding developpeur
 
@@ -130,8 +127,6 @@ pnpm install
 Depuis la racine du depot :
 
 ```bash
-corepack enable
-corepack prepare pnpm@10.33.0 --activate
 pnpm install
 pnpm run tsoa:gen
 ```

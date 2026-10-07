@@ -31,22 +31,26 @@ minimumReleaseAgeExclude:
   - postcss@8.5.18 || 8.5.23
   - nanoid@3.3.16 || 3.3.18
 overrides:
-  '@nestjs/core@<=11.1.17': ^11.1.18
-  esbuild@<=0.24.2: ^0.24.3
-  path-to-regexp@>=8.0.0 <8.4.0: ^8.4.0
-  qs@>=6.11.1 <=6.15.1: ^6.15.2
-  react-router@>=6.0.0 <7.18.0: ^7.18.0
-  react-router@>=6.4.0 <7.18.0: ^7.18.0
-  react-router@>=7.0.0 <7.14.0: ^7.14.0
-  react-router@>=7.0.0 <7.14.1: ^7.14.1
-  react-router@>=7.0.0 <7.15.0: ^7.15.0
-  react-router@>=7.0.0 <7.18.0: ^7.18.0
-  react-router@>=7.0.0 <=7.14.1: ^7.14.2
-  react-router@>=7.11.0 <7.18.0: ^7.18.0
-  react-router@>=7.12.0 <7.15.1: ^7.15.1
-  react-router@>=7.12.0 <7.18.2: ^7.18.2
-  shell-quote@<=1.8.4: ^1.8.5
-  shell-quote@>=1.1.0 <=1.8.3: ^1.8.4
+  '@humanfs/node@<0.16.8': ^0.16.8
+  '@vitest/mocker@>=2.1.0 <4.1.11': ^4.1.11
+  axios@>=1.0.0 <1.20.0: ^1.20.0
+  baseline-browser-mapping@>=2.0.0 <2.11.0: ^2.11.0
+  basic-ftp@<=6.2.0: ^6.2.1
+  brace-expansion@<1.1.21: ^1.1.21
+  brace-expansion@>=2.0.0 <2.1.7: ^2.1.7
+  brace-expansion@>=4.0.0 <5.0.12: ^5.0.12
+  browserslist@<=4.28.6: ^4.28.7
+  esbuild@<=0.24.2: ^0.25.0
+  file-type@>=13.0.0 <21.3.1: ^21.3.1
+  i18next-http-backend@<4.0.2: ^4.0.2
+  ip-address@<=10.7.0: ^10.7.1
+  js-yaml@>=4.0.0 <4.3.2: ^4.3.2
+  proxy-addr@>=1.1.0 <2.0.8: ^2.0.8
+  qs@>=2.2.5 <6.16.0: ^6.16.0
+  shell-quote@>=1.8.4 <1.11.0: ^1.11.0
+  source-map-js@>=1.0.0 <1.2.2: ^1.2.2
+  tinypool@<2.1.2: ^2.1.2
   ts-deepmerge@<8.0.0: ^8.0.0
-  vite@<=6.4.1: ^6.4.2
   vite@<=6.4.2: ^6.4.3
+  vitest@<3.2.6: ^3.2.6
+  vitest@>=2.1.0 <4.1.11: ^4.1.11
