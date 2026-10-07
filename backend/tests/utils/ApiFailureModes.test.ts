@@ -1,7 +1,12 @@
 /// <reference types="jest" />
 
-import express, { type NextFunction, type Request, type Response } from "express";
+import express, {
+  type NextFunction,
+  type Request,
+  type Response,
+} from "express";
 import request from "supertest";
+import { RegisterRoutes } from "../../src/routes";
 
 const helloHandlers = {
   getHello: jest.fn(async () => ({ message: "ok", lang: "en" })),
@@ -35,53 +40,91 @@ const statsHandlers = {
   getLatestStats: jest.fn(async () => null),
 };
 
+const missionHandlers = {
+  getMissions: jest.fn(async () => null),
+};
+
 jest.mock("../../src/controllers/HelloController", () => ({
   HelloController: class {
-    public async getHello() { return helloHandlers.getHello(); }
-    public async getLanguage() { return helloHandlers.getLanguage(); }
-    public async getMeInfo() { return helloHandlers.getMeInfo(); }
-    public async postHello() { return helloHandlers.postHello(); }
-    public async putHello() { return helloHandlers.putHello(); }
-    public async patchHello() { return helloHandlers.patchHello(); }
-    public async delHello() { return helloHandlers.delHello(); }
+    public async getHello() {
+      return helloHandlers.getHello();
+    }
+    public async getLanguage() {
+      return helloHandlers.getLanguage();
+    }
+    public async getMeInfo() {
+      return helloHandlers.getMeInfo();
+    }
+    public async postHello() {
+      return helloHandlers.postHello();
+    }
+    public async putHello() {
+      return helloHandlers.putHello();
+    }
+    public async patchHello() {
+      return helloHandlers.patchHello();
+    }
+    public async delHello() {
+      return helloHandlers.delHello();
+    }
   },
 }));
 
 jest.mock("../../src/controllers/ShipController", () => ({
   ShipController: class {
-    public async getShipLoadout() { return shipHandlers.getShipLoadout(); }
+    public async getShipLoadout() {
+      return shipHandlers.getShipLoadout();
+    }
   },
 }));
 
 jest.mock("../../src/controllers/ColonisationController", () => ({
   ColonisationController: class {
-    public async getLatestSite() { return constructionHandlers.getLatestSite(); }
-    public async getLatestSiteStats() { return constructionHandlers.getLatestSiteStats(); }
-    public async getLatestMarket() { return constructionHandlers.getLatestMarket(); }
+    public async getLatestSite() {
+      return constructionHandlers.getLatestSite();
+    }
+    public async getLatestSiteStats() {
+      return constructionHandlers.getLatestSiteStats();
+    }
+    public async getLatestMarket() {
+      return constructionHandlers.getLatestMarket();
+    }
   },
 }));
 
 jest.mock("../../src/controllers/SseController", () => ({
   SseController: class {
     public setHeader() {}
-    public stream(req: any) { return sseHandlers.stream(req); }
+    public stream(req: any) {
+      return sseHandlers.stream(req);
+    }
   },
 }));
 
 jest.mock("../../src/controllers/StatsController", () => ({
   StatsController: class {
-    public async getLatestStats() { return statsHandlers.getLatestStats(); }
+    public async getLatestStats() {
+      return statsHandlers.getLatestStats();
+    }
   },
 }));
 
-import { RegisterRoutes } from "../../src/routes";
+jest.mock("../../src/controllers/MissionController", () => ({
+  MissionController: class {
+    public async getMissions() {
+      return missionHandlers.getMissions();
+    }
+  },
+}));
 
 describe("API failure modes", () => {
   const app = express();
   app.use(express.json());
   RegisterRoutes(app);
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    res.status(err?.status || 500).json({ message: err?.message || "Internal Server Error" });
+    res
+      .status(err?.status || 500)
+      .json({ message: err?.message || "Internal Server Error" });
   });
 
   beforeEach(() => {
@@ -90,6 +133,7 @@ describe("API failure modes", () => {
     Object.values(constructionHandlers).forEach((fn) => fn.mockReset());
     Object.values(sseHandlers).forEach((fn) => fn.mockReset());
     Object.values(statsHandlers).forEach((fn) => fn.mockReset());
+    Object.values(missionHandlers).forEach((fn) => fn.mockReset());
 
     helloHandlers.getHello.mockResolvedValue({ message: "ok", lang: "en" });
     helloHandlers.getLanguage.mockResolvedValue("en");
@@ -104,6 +148,7 @@ describe("API failure modes", () => {
     constructionHandlers.getLatestSiteStats.mockResolvedValue(null);
     constructionHandlers.getLatestMarket.mockResolvedValue(null);
     statsHandlers.getLatestStats.mockResolvedValue(null);
+    missionHandlers.getMissions.mockResolvedValue(null);
   });
 
   it("returns 404 on unknown route", async () => {
@@ -140,7 +185,9 @@ describe("API failure modes", () => {
     constructionHandlers.getLatestSite.mockResolvedValue(null);
 
     const shipRes = await request(app).get("/api/ship/loadout").expect(204);
-    const siteRes = await request(app).get("/api/construction/latestSite").expect(204);
+    const siteRes = await request(app)
+      .get("/api/construction/latestSite")
+      .expect(204);
 
     expect(shipRes.text).toBe("");
     expect(siteRes.text).toBe("");

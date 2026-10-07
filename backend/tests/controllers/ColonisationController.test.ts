@@ -22,10 +22,13 @@ const mockedGetLatestConstructionDepot =
   getLatestConstructionDepot as jest.MockedFunction<
     typeof getLatestConstructionDepot
   >;
-const mockedGetLatestMarket =
-  getLatestMarket as jest.MockedFunction<typeof getLatestMarket>;
+const mockedGetLatestMarket = getLatestMarket as jest.MockedFunction<
+  typeof getLatestMarket
+>;
 const mockedCalculateLatestSiteStats =
-  calculateLatestSiteStats as jest.MockedFunction<typeof calculateLatestSiteStats>;
+  calculateLatestSiteStats as jest.MockedFunction<
+    typeof calculateLatestSiteStats
+  >;
 
 describe("ColonisationController", () => {
   beforeEach(() => {

@@ -12,9 +12,12 @@ jest.mock("../../src/services/LogInterpreterService", () => ({
   getLatestCommander: jest.fn(),
 }));
 
-const mockedGetLanguage = getLanguage as jest.MockedFunction<typeof getLanguage>;
-const mockedGetLatestCommander =
-  getLatestCommander as jest.MockedFunction<typeof getLatestCommander>;
+const mockedGetLanguage = getLanguage as jest.MockedFunction<
+  typeof getLanguage
+>;
+const mockedGetLatestCommander = getLatestCommander as jest.MockedFunction<
+  typeof getLatestCommander
+>;
 
 describe("HelloController", () => {
   beforeEach(() => {

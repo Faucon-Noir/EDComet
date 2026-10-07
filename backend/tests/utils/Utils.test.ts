@@ -10,7 +10,9 @@ jest.mock("../../src/services/LogInterpreterService", () => ({
   getFileHeader: jest.fn(),
 }));
 
-const mockedGetFileHeader = getFileHeader as jest.MockedFunction<typeof getFileHeader>;
+const mockedGetFileHeader = getFileHeader as jest.MockedFunction<
+  typeof getFileHeader
+>;
 
 describe("utils", () => {
   afterEach(() => {
@@ -23,12 +25,18 @@ describe("utils", () => {
     const platform = Object.getOwnPropertyDescriptor(process, "platform");
     Object.defineProperty(process, "platform", { value: "win32" });
     jest.spyOn(os, "homedir").mockReturnValue("C:/Users/test");
-    jest.spyOn(fs, "existsSync").mockImplementation((inputPath) =>
-      String(inputPath).includes(path.join("Saved Games", "Frontier Developments", "Elite Dangerous")),
-    );
+    jest
+      .spyOn(fs, "existsSync")
+      .mockImplementation((inputPath) =>
+        String(inputPath).includes(
+          path.join("Saved Games", "Frontier Developments", "Elite Dangerous"),
+        ),
+      );
 
     const result = getLogsPath();
-    expect(result).toContain(path.join("Saved Games", "Frontier Developments", "Elite Dangerous"));
+    expect(result).toContain(
+      path.join("Saved Games", "Frontier Developments", "Elite Dangerous"),
+    );
 
     Object.defineProperty(process, "platform", platform!);
   });
@@ -55,9 +63,11 @@ describe("utils", () => {
     Object.defineProperty(process, "platform", { value: "linux" });
     process.env.XDG_DATA_HOME = "/home/test/.local/share";
     jest.spyOn(os, "homedir").mockReturnValue("/home/test");
-    jest.spyOn(fs, "existsSync").mockImplementation((inputPath) =>
-      String(inputPath).includes("compatdata"),
-    );
+    jest
+      .spyOn(fs, "existsSync")
+      .mockImplementation((inputPath) =>
+        String(inputPath).includes("compatdata"),
+      );
 
     expect(getLogsPath()).toContain("compatdata");
 
@@ -70,9 +80,9 @@ describe("utils", () => {
     Object.defineProperty(process, "platform", { value: "linux" });
     delete process.env.XDG_DATA_HOME;
     jest.spyOn(os, "homedir").mockReturnValue("/home/test");
-    jest.spyOn(fs, "existsSync").mockImplementation((inputPath) =>
-      String(inputPath).includes(".steam"),
-    );
+    jest
+      .spyOn(fs, "existsSync")
+      .mockImplementation((inputPath) => String(inputPath).includes(".steam"));
 
     expect(getLogsPath()).toContain(".steam");
 

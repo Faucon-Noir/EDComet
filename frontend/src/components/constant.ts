@@ -1,4 +1,4 @@
-import { Construction, Home, Ship, Stats } from "../pages/paths";
+import { Construction, Home, Mission, Ship, Stats } from "../pages/paths";
 import { NavItemType } from "./type";
 
 export const navItem: NavItemType[] = [
@@ -6,6 +6,7 @@ export const navItem: NavItemType[] = [
   { nav: "construction", link: Construction },
   { nav: "ship", link: Ship },
   { nav: "stats", link: Stats },
+  { nav: "mission", link: Mission },
 ];
 
 export const lang = [

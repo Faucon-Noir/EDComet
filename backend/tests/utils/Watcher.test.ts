@@ -1,6 +1,10 @@
 /// <reference types="jest" />
 
 import { EventEmitter } from "events";
+import fs from "fs";
+import { getLatestLogFile } from "../../src/services/LogInterpreterService";
+import { getLogsPath } from "../../src/utils/utils";
+import { LogFileWatcher } from "../../src/utils/watcher";
 
 jest.mock("../../src/services/LogInterpreterService", () => ({
   getLatestLogFile: jest.fn(),
@@ -20,16 +24,22 @@ jest.mock("fs", () => {
   };
 });
 
-import fs from "fs";
-import { getLatestLogFile } from "../../src/services/LogInterpreterService";
-import { getLogsPath } from "../../src/utils/utils";
-import { LogFileWatcher } from "../../src/utils/watcher";
-
-const mockedStatSync = fs.statSync as unknown as jest.MockedFunction<typeof fs.statSync>;
-const mockedExistsSync = fs.existsSync as unknown as jest.MockedFunction<typeof fs.existsSync>;
-const mockedCreateReadStream = fs.createReadStream as unknown as jest.MockedFunction<typeof fs.createReadStream>;
-const mockedGetLatestLogFile = getLatestLogFile as jest.MockedFunction<typeof getLatestLogFile>;
-const mockedGetLogsPath = getLogsPath as jest.MockedFunction<typeof getLogsPath>;
+const mockedStatSync = fs.statSync as unknown as jest.MockedFunction<
+  typeof fs.statSync
+>;
+const mockedExistsSync = fs.existsSync as unknown as jest.MockedFunction<
+  typeof fs.existsSync
+>;
+const mockedCreateReadStream =
+  fs.createReadStream as unknown as jest.MockedFunction<
+    typeof fs.createReadStream
+  >;
+const mockedGetLatestLogFile = getLatestLogFile as jest.MockedFunction<
+  typeof getLatestLogFile
+>;
+const mockedGetLogsPath = getLogsPath as jest.MockedFunction<
+  typeof getLogsPath
+>;
 
 describe("LogFileWatcher", () => {
   beforeEach(() => {
@@ -96,7 +106,9 @@ describe("LogFileWatcher", () => {
 
     jest.advanceTimersByTime(1000);
 
-    expect(fileChanges.some((change) => change.type === "journal-switched")).toBe(true);
+    expect(
+      fileChanges.some((change) => change.type === "journal-switched"),
+    ).toBe(true);
     expect(lines).toContain('{"event":"Loadout"}');
     watcher.close();
   });
@@ -136,8 +148,16 @@ describe("LogFileWatcher", () => {
     marketMtime = 20;
     jest.advanceTimersByTime(1000);
 
-    expect(events.some((item) => item.type === "support-file" && item.change === "created")).toBe(true);
-    expect(events.some((item) => item.type === "support-file" && item.change === "updated")).toBe(true);
+    expect(
+      events.some(
+        (item) => item.type === "support-file" && item.change === "created",
+      ),
+    ).toBe(true);
+    expect(
+      events.some(
+        (item) => item.type === "support-file" && item.change === "updated",
+      ),
+    ).toBe(true);
     watcher.close();
   });
 
@@ -177,8 +197,14 @@ describe("LogFileWatcher", () => {
     mockedGetLatestLogFile.mockReturnValue("C:/logs/Journal.20260102.log");
     (watcher as any).pollJournal();
 
-    expect(warnSpy).toHaveBeenCalledWith("🚧 Unable to stat journal:", "cannot stat");
-    expect(warnSpy).toHaveBeenCalledWith("🚧 Unable to read switched journal:", "cannot stat");
+    expect(warnSpy).toHaveBeenCalledWith(
+      "🚧 Unable to stat journal:",
+      "cannot stat",
+    );
+    expect(warnSpy).toHaveBeenCalledWith(
+      "🚧 Unable to read switched journal:",
+      "cannot stat",
+    );
     watcher.close();
   });
 
@@ -226,7 +252,10 @@ describe("LogFileWatcher", () => {
 
     jest.advanceTimersByTime(1000);
 
-    expect(warnSpy).toHaveBeenCalledWith("🚧 Journal stream read error:", "stream broke");
+    expect(warnSpy).toHaveBeenCalledWith(
+      "🚧 Journal stream read error:",
+      "stream broke",
+    );
     watcher.close();
   });
 });

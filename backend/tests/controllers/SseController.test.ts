@@ -10,8 +10,9 @@ jest.mock("../../src/services/SseService", () => ({
   },
 }));
 
-const mockedSubscribe = journalSseService
-  .subscribe as jest.MockedFunction<typeof journalSseService.subscribe>;
+const mockedSubscribe = journalSseService.subscribe as jest.MockedFunction<
+  typeof journalSseService.subscribe
+>;
 
 describe("SseController", () => {
   beforeEach(() => {
