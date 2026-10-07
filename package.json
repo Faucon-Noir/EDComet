@@ -1,7 +1,6 @@
 {
 	"name": "ed-comet-workspace",
 	"private": true,
-	"packageManager": "pnpm@11.21.0",
 	"scripts": {
 		"dev:backend": "pnpm --filter ed-comet-backend run dev",
 		"dev:frontend": "pnpm --filter ed-comet run dev",

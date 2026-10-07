@@ -5,7 +5,7 @@ Package management is now handled with pnpm from the workspace root. See ./docs/
 ## Prerequisites
 
 - Node.js 22.x or 24.x
-- Corepack enabled, or pnpm installed
+- pnpm 12.x installed directly (not through Corepack), for example `npm install -g pnpm@12.9.1` or `pnpm self-update 12.9.1`
 - Java runtime 17 or newer for the OpenAPI client generator
 
 On Arch-based distributions such as CachyOS, install it with:
@@ -19,8 +19,6 @@ sudo pacman -S jre-openjdk
 From the root of the repository:
 
 ```bash
-corepack enable
-corepack prepare pnpm@10.33.0 --activate
 pnpm install
 pnpm run tsoa:gen
 ```
