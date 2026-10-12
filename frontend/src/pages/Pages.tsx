@@ -1,14 +1,17 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import HomePage from "./Home";
 import Layout from "./Layout";
 import { Construction, Home, Mission, Ship, Stats } from "./paths";
-import ErrorComponent from "../components/error";
+import ErrorComponent, { ErrorBoundary } from "../components/error";
 import ShipPage from "./Ship";
 import ConstructionPage from "./Construction";
 import StatsPage from "./Stats";
 
 const Pages = () => {
+  const location = useLocation();
+
   return (
+    <ErrorBoundary key={location.key}>
     <Routes>
       <Route path="*" element={<ErrorComponent />} />
 
@@ -21,6 +24,7 @@ const Pages = () => {
         {/* <Route path={Test} element={<TestPage />} /> */}
       </Route>
     </Routes>
+    </ErrorBoundary>
   );
 };
 export default Pages;
